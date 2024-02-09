@@ -2,5 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="not_selected">#A6A6A6</color>
+    <color name="selected">#dd6304</color>
     <color name="main_bg">#1f1f1f</color>
+    <color name="header">#777777</color>
 </resources>
