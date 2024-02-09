@@ -37,6 +37,11 @@
             android:contentDescription="@string/settings"/>
     </com.google.android.material.appbar.MaterialToolbar>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/header"
+        app:layout_constraintBottom_toTopOf="@+id/btNavigation"/>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/btNavigation"
         android:background="@color/main_bg"
