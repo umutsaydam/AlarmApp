@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_nav"
+    app:startDestination="@id/alarmFragment">
+
+    <fragment
+        android:id="@+id/alarmFragment"
+        android:name="com.umutsaydam.alarmapp.ui.fragments.AlarmFragment"
+        android:label="fragment_alarm"
+        tools:layout="@layout/fragment_alarm" >
+        <action
+            android:id="@+id/action_alarmFragment_to_worldClockFragment"
+            app:destination="@id/worldClockFragment" />
+        <action
+            android:id="@+id/action_alarmFragment_to_stopWatchFragment"
+            app:destination="@id/stopWatchFragment" />
+        <action
+            android:id="@+id/action_alarmFragment_to_timerFragment"
+            app:destination="@id/timerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/stopWatchFragment"
+        android:name="com.umutsaydam.alarmapp.ui.fragments.StopWatchFragment"
+        android:label="fragment_stop_watch"
+        tools:layout="@layout/fragment_stop_watch" >
+        <action
+            android:id="@+id/action_stopWatchFragment_to_worldClockFragment"
+            app:destination="@id/worldClockFragment" />
+        <action
+            android:id="@+id/action_stopWatchFragment_to_alarmFragment"
+            app:destination="@id/alarmFragment" />
+        <action
+            android:id="@+id/action_stopWatchFragment_to_timerFragment"
+            app:destination="@id/timerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/timerFragment"
+        android:name="com.umutsaydam.alarmapp.ui.fragments.TimerFragment"
+        android:label="fragment_timer"
+        tools:layout="@layout/fragment_timer" >
+        <action
+            android:id="@+id/action_timerFragment_to_alarmFragment"
+            app:destination="@id/alarmFragment" />
+        <action
+            android:id="@+id/action_timerFragment_to_worldClockFragment"
+            app:destination="@id/worldClockFragment" />
+        <action
+            android:id="@+id/action_timerFragment_to_stopWatchFragment"
+            app:destination="@id/stopWatchFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/worldClockFragment"
+        android:name="com.umutsaydam.alarmapp.ui.fragments.WorldClockFragment"
+        android:label="fragment_world_clock"
+        tools:layout="@layout/fragment_world_clock" >
+        <action
+            android:id="@+id/action_worldClockFragment_to_stopWatchFragment"
+            app:destination="@id/stopWatchFragment" />
+        <action
+            android:id="@+id/action_worldClockFragment_to_alarmFragment"
+            app:destination="@id/alarmFragment" />
+        <action
+            android:id="@+id/action_worldClockFragment_to_timerFragment"
+            app:destination="@id/timerFragment" />
+    </fragment>
+</navigation>
