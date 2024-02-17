@@ -44,7 +44,7 @@ class AlarmFragment : Fragment(), SetCheckedListener, SetClickListener {
 
     override fun setOnCheckedListener(alarmModel: AlarmModel) {
         alarmModel.alarmEnabled = !alarmModel.alarmEnabled
-        context?.let { viewModel.updateAlarm(alarmModel, it) }
+        viewModel.updateAlarm(alarmModel)
     }
 
     override fun setOnLongClickListener(alarmModel: AlarmModel) {

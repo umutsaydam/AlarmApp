@@ -45,7 +45,7 @@ class SetAlarmFragment : Fragment() {
         binding.btAlarmSave.setOnClickListener {
             val title = binding.tvClockTitle.text.toString()
 
-            viewModel.addAlarm(title, timeInMillis, context!!).invokeOnCompletion {
+            viewModel.addAlarm(title, timeInMillis).invokeOnCompletion {
                 findNavController().popBackStack()
             }
 
