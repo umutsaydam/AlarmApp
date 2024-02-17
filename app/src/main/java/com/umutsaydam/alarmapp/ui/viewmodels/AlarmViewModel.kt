@@ -11,16 +11,14 @@ import com.umutsaydam.alarmapp.AlarmReceiver
 import com.umutsaydam.alarmapp.models.AlarmModel
 import com.umutsaydam.alarmapp.repository.AlarmRepository
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class AlarmViewModel(private val alarmRepository: AlarmRepository) : ViewModel() {
 
     fun getAlarms() = alarmRepository.getAllAlarms()
 
     fun addAlarm(alarmTitle: String, timeInMillis: Long, context: Context) = viewModelScope.launch {
-        var alarmID: Long = 0;
         val alarm = AlarmModel(0, alarmTitle, timeInMillis, true)
-        alarmID = alarmRepository.addAlarm(alarm)
+        val alarmID = alarmRepository.addAlarm(alarm)
         Log.d("R/T", "$alarmID**")
 
 
@@ -34,6 +32,33 @@ class AlarmViewModel(private val alarmRepository: AlarmRepository) : ViewModel()
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager[AlarmManager.RTC_WAKEUP, timeInMillis] = pendingIntent
 
+    }
+
+    fun updateAlarm(alarmModel: AlarmModel, context: Context) = viewModelScope.launch {
+        alarmRepository.addAlarm(alarmModel)
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
+        if (alarmModel.alarmEnabled){
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                alarmModel.alarmId,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            Log.d("R/T", alarmModel.alarmId.toString()+" etkin")
+            alarmManager[AlarmManager.RTC_WAKEUP, alarmModel.alarmTime] = pendingIntent
+        }else{
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                alarmModel.alarmId,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            Log.d("R/T", alarmModel.alarmId.toString()+" devre disi")
+            alarmManager[AlarmManager.RTC_WAKEUP, alarmModel.alarmTime] = pendingIntent
+            alarmManager.cancel(pendingIntent)
+        }
     }
 
     fun getSingleAlarm(alarmId: Int) = alarmRepository.getSingleAlarm(alarmId)

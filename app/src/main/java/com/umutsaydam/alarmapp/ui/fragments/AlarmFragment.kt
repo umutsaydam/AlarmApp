@@ -47,32 +47,8 @@ class AlarmFragment : Fragment(), SetCheckedListener {
     }
 
     override fun setOnCheckedListener(alarmModel: AlarmModel) {
-        val state = !alarmModel.alarmEnabled
-        alarmModel.alarmEnabled = state
-        val alarmManager = context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java)
-        Log.d("R/T", "tetiklendi")
-
-        if (state){
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                alarmModel.alarmId,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-            Log.d("R/T", alarmModel.alarmId.toString()+" etkin")
-            alarmManager[AlarmManager.RTC_WAKEUP, alarmModel.alarmTime] = pendingIntent
-        }else{
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                alarmModel.alarmId,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-            Log.d("R/T", alarmModel.alarmId.toString()+" devre disi")
-            alarmManager[AlarmManager.RTC_WAKEUP, alarmModel.alarmTime] = pendingIntent
-            alarmManager.cancel(pendingIntent)
-        }
+        alarmModel.alarmEnabled = !alarmModel.alarmEnabled
+        context?.let { viewModel.updateAlarm(alarmModel, it) }
     }
 
     private fun initViewModel() {
