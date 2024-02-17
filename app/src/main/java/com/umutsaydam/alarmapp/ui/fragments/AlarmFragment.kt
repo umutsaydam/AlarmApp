@@ -64,7 +64,10 @@ class AlarmFragment : Fragment(), SetCheckedListener, SetClickListener {
     private fun initViewModel() {
         viewModel = ViewModelProvider(
             this,
-            AlarmsViewModelFactory(AlarmRepository(AlarmDatabase(activity!!.applicationContext)))
+            AlarmsViewModelFactory(
+                requireContext(),
+                AlarmRepository(AlarmDatabase(requireContext()))
+            )
         )[AlarmViewModel::class.java]
     }
 
