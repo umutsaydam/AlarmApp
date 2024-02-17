@@ -1,11 +1,7 @@
 package com.umutsaydam.alarmapp.ui.fragments
 
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
+import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +9,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.umutsaydam.alarmapp.AlarmReceiver
 import com.umutsaydam.alarmapp.R
 import com.umutsaydam.alarmapp.adapters.AlarmAdapter
 import com.umutsaydam.alarmapp.databinding.FragmentAlarmBinding
@@ -23,8 +18,9 @@ import com.umutsaydam.alarmapp.repository.AlarmRepository
 import com.umutsaydam.alarmapp.ui.viewmodels.AlarmViewModel
 import com.umutsaydam.alarmapp.ui.viewmodels.AlarmsViewModelFactory
 import com.umutsaydam.alarmapp.utils.SetCheckedListener
+import com.umutsaydam.alarmapp.utils.SetClickListener
 
-class AlarmFragment : Fragment(), SetCheckedListener {
+class AlarmFragment : Fragment(), SetCheckedListener, SetClickListener {
     private var _binding: FragmentAlarmBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: AlarmViewModel
@@ -51,6 +47,20 @@ class AlarmFragment : Fragment(), SetCheckedListener {
         context?.let { viewModel.updateAlarm(alarmModel, it) }
     }
 
+    override fun setOnLongClickListener(alarmModel: AlarmModel) {
+        val dialog = AlertDialog.Builder(context)
+        dialog.setTitle("Delete selected alarm")
+        dialog.setMessage("Alarm will delete.")
+        dialog.setNegativeButton("No") { _, _ ->
+
+        }
+        dialog.setPositiveButton("Yes") { _, _ ->
+            viewModel.deleteAlarm(alarmModel)
+        }
+        dialog.setCancelable(true)
+        dialog.show()
+    }
+
     private fun initViewModel() {
         viewModel = ViewModelProvider(
             this,
@@ -63,7 +73,7 @@ class AlarmFragment : Fragment(), SetCheckedListener {
             findNavController().navigate(R.id.action_alarmFragment_to_setAlarmFragment)
         }
 
-        alarmAdapter = AlarmAdapter(this@AlarmFragment)
+        alarmAdapter = AlarmAdapter(this@AlarmFragment, this@AlarmFragment)
         val linearLayoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.rvAlarm.apply {

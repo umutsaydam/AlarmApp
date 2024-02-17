@@ -1,6 +1,7 @@
 package com.umutsaydam.alarmapp.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -9,8 +10,9 @@ import com.umutsaydam.alarmapp.R
 import com.umutsaydam.alarmapp.databinding.AlarmListItemBinding
 import com.umutsaydam.alarmapp.models.AlarmModel
 import com.umutsaydam.alarmapp.utils.SetCheckedListener
+import com.umutsaydam.alarmapp.utils.SetClickListener
 
-class AlarmAdapter(private val setOnCheckedListener: SetCheckedListener) :
+class AlarmAdapter(private val setOnCheckedListener: SetCheckedListener, private val setClickListener: SetClickListener) :
     RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder>() {
     private lateinit var binding: AlarmListItemBinding
 
@@ -38,6 +40,13 @@ class AlarmAdapter(private val setOnCheckedListener: SetCheckedListener) :
                 setCardBackground(alarm.alarmEnabled)
             }
         }
+
+        fun setOnLongClickListener(alarmModel: AlarmModel, setClickListener: SetClickListener){
+            itemBinding.cvAlarm.setOnLongClickListener(View.OnLongClickListener {
+                setClickListener.setOnLongClickListener(alarmModel)
+                return@OnLongClickListener true
+            })
+        }
     }
 
     private val differCallback = object : DiffUtil.ItemCallback<AlarmModel>() {
@@ -61,6 +70,7 @@ class AlarmAdapter(private val setOnCheckedListener: SetCheckedListener) :
         holder.bind(differ.currentList[position])
 
         holder.setCheckedListener(differ.currentList[position], setOnCheckedListener)
+        holder.setOnLongClickListener(differ.currentList[position], setClickListener)
     }
 
     override fun getItemCount(): Int {

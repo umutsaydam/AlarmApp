@@ -39,23 +39,23 @@ class AlarmViewModel(private val alarmRepository: AlarmRepository) : ViewModel()
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
-        if (alarmModel.alarmEnabled){
+        if (alarmModel.alarmEnabled) {
             val pendingIntent = PendingIntent.getBroadcast(
                 context,
                 alarmModel.alarmId,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-            Log.d("R/T", alarmModel.alarmId.toString()+" etkin")
+            Log.d("R/T", alarmModel.alarmId.toString() + " etkin")
             alarmManager[AlarmManager.RTC_WAKEUP, alarmModel.alarmTime] = pendingIntent
-        }else{
+        } else {
             val pendingIntent = PendingIntent.getBroadcast(
                 context,
                 alarmModel.alarmId,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-            Log.d("R/T", alarmModel.alarmId.toString()+" devre disi")
+            Log.d("R/T", alarmModel.alarmId.toString() + " devre disi")
             alarmManager[AlarmManager.RTC_WAKEUP, alarmModel.alarmTime] = pendingIntent
             alarmManager.cancel(pendingIntent)
         }
@@ -63,4 +63,7 @@ class AlarmViewModel(private val alarmRepository: AlarmRepository) : ViewModel()
 
     fun getSingleAlarm(alarmId: Int) = alarmRepository.getSingleAlarm(alarmId)
 
+    fun deleteAlarm(alarmModel: AlarmModel) = viewModelScope.launch {
+        alarmRepository.deleteAlarm(alarmModel)
+    }
 }
