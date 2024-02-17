@@ -1,11 +1,13 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id("com.google.devtools.ksp")
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
     namespace 'com.umutsaydam.alarmapp'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.umutsaydam.alarmapp"
@@ -24,11 +26,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    buildFeatures{
+        viewBinding true
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 }
 
@@ -42,7 +47,22 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
+    // Room
+    implementation "androidx.room:room-runtime:2.4.0"
+    ksp("androidx.room:room-compiler:2.4.0")
+
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.5'
+
+    // Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:2.4.0"
+
     // Navigation Components
     implementation "androidx.navigation:navigation-fragment-ktx:2.4.0"
     implementation "androidx.navigation:navigation-ui-ktx:2.4.0"
+
+
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
 }

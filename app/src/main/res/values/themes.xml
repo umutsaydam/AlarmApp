@@ -4,6 +4,7 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="floatingActionButtonStyle">@style/FloatingActionButton</item>
+        <item name="android:timePickerStyle">@style/Picker</item>
     </style>
 
     <style name="Theme.AlarmApp" parent="Base.Theme.AlarmApp" />
@@ -13,5 +14,12 @@
     </style>
     <style name="fabShapeAppearance" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerSize">50%</item>
+    </style>
+    <style name="Picker" parent="ThemeOverlay.Material3.MaterialTimePicker">
+        <item name="shapeAppearanceOverlay">@style/fabShapeAppearance</item>
+    </style>
+    <style name="pickerShapeAppearance" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="android:background">@color/picker_bg</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 </resources>
