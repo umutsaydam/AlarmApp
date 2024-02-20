@@ -8,22 +8,22 @@ import android.util.Log
 import com.umutsaydam.alarmapp.AlarmReceiver
 import com.umutsaydam.alarmapp.models.AlarmModel
 
-class Alarms(private val context: Context) : IAlarmManager {
+class Alarms(private val context: Context) :
+    IAlarmManager {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    private val intent = Intent(context, AlarmReceiver::class.java)
 
-    override fun createAlarm(alarmId: Int, timeInMillis: Long) {
-        val intent = Intent(context, AlarmReceiver::class.java)
+    override fun createAlarm(alarmModel: AlarmModel) {
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            alarmId,
+            alarmModel.alarmId,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
-        alarmManager[AlarmManager.RTC_WAKEUP, timeInMillis] = pendingIntent
+        alarmManager[AlarmManager.RTC_WAKEUP, alarmModel.alarmTime] = pendingIntent
     }
 
     override fun updateAlarm(alarmModel: AlarmModel) {
-        val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             alarmModel.alarmId,
@@ -41,7 +41,6 @@ class Alarms(private val context: Context) : IAlarmManager {
     }
 
     override fun deleteAlarm(alarmModel: AlarmModel) {
-        val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             alarmModel.alarmId,

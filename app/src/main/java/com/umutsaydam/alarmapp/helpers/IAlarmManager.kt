@@ -3,7 +3,7 @@ package com.umutsaydam.alarmapp.helpers
 import com.umutsaydam.alarmapp.models.AlarmModel
 
 interface IAlarmManager {
-    fun createAlarm(alarmId: Int, timeInMillis: Long){}
+    fun createAlarm(alarmModel: AlarmModel){}
 
     fun updateAlarm(alarmModel: AlarmModel){}
 
