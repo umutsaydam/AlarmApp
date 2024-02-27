@@ -7,6 +7,7 @@ import android.util.Log
 import com.umutsaydam.alarmapp.db.AlarmDatabase
 import com.umutsaydam.alarmapp.helpers.AlarmSchedule
 import com.umutsaydam.alarmapp.helpers.Alarms
+import com.umutsaydam.alarmapp.helpers.IAlarmManager
 import com.umutsaydam.alarmapp.repository.AlarmRepository
 import com.umutsaydam.alarmapp.ui.TimesUpActivity
 import kotlinx.coroutines.CoroutineScope
@@ -15,13 +16,19 @@ import kotlinx.coroutines.launch
 
 class AlarmReceiver : BroadcastReceiver() {
 
-    override fun onReceive(context: Context, intent: Intent) {
-        val alarmId = intent.getIntExtra("alarmId", -1)
+    private lateinit var alarmManager: IAlarmManager
+    private lateinit var alarmSchedule: AlarmSchedule
 
+    override fun onReceive(context: Context, intent: Intent) {
+        if (!::alarmManager.isInitialized) {
+            val alarms = Alarms(context)
+            alarmManager = alarms
+            val schedule = AlarmSchedule()
+            alarmSchedule = schedule
+        }
+        val alarmId = intent.getIntExtra("alarmId", -1)
         if (alarmId != -1) {
             val alarmRepository = AlarmRepository(AlarmDatabase(context))
-            val alarmSchedule = AlarmSchedule()
-            val alarm = Alarms(context)
             CoroutineScope(Dispatchers.IO).launch {
                 val alarmModel = alarmRepository.getSingleAlarm(alarmId)
                 if (alarmModel.alarmRepeat.size > 1) {
@@ -29,7 +36,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         alarmSchedule.alarmReschedule(alarmModel)
                     alarmRepository.addAlarm(alarmModel)
                 } else {
-                    alarm.deleteAlarm(alarmModel)
+                    alarmManager.deleteAlarm(alarmModel)
                     alarmRepository.deleteAlarm(alarmModel)
                 }
                 Log.d("R/T", alarmModel.alarmTime.toString())
