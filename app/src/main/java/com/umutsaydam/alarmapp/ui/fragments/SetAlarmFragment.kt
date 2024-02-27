@@ -1,6 +1,7 @@
 package com.umutsaydam.alarmapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,7 @@ class SetAlarmFragment : Fragment(), SetCheckedListener {
 
         binding.btAlarmSave.setOnClickListener {
             val title = binding.tvClockTitle.text.toString()
+            Log.d("R/T", "$dayList")
             viewModel.addAlarm(title, timeInMillis, dayList).invokeOnCompletion {
                 findNavController().popBackStack()
             }

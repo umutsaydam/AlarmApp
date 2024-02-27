@@ -18,7 +18,7 @@ interface AlarmDao {
     fun getAllAlarms(): LiveData<List<AlarmModel>>
 
     @Query("SELECT * FROM alarms WHERE alarmId = :alarmId")
-    fun getSingleAlarm(alarmId: Int): LiveData<AlarmModel>
+    suspend fun getSingleAlarm(alarmId: Int): AlarmModel
 
     @Delete
     suspend fun deleteAlarm(alarmModel: AlarmModel)

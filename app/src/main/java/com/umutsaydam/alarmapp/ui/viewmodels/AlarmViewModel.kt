@@ -1,6 +1,7 @@
 package com.umutsaydam.alarmapp.ui.viewmodels
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.umutsaydam.alarmapp.helpers.AlarmSchedule
@@ -20,8 +21,9 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         viewModelScope.launch {
             alarmRepeat.sort()
             if (alarmRepeat.isEmpty()) alarmRepeat.addAll((1..7).map { it })
-            val rescheduledTime = alarmSchedule.alarmReschedule(timeInMillis, alarmRepeat)
-            val alarm = AlarmModel(0, alarmTitle, rescheduledTime, alarmRepeat, true)
+            Log.d("R/T", "$alarmRepeat.toString() viewmodel")
+//            val rescheduledTime = alarmSchedule.alarmReschedule(alarmModel)
+            val alarm = AlarmModel(0, alarmTitle, timeInMillis, alarmRepeat, true)
             val alarmId = alarmRepository.addAlarm(alarm).toInt()
             alarm.alarmId = alarmId
             alarmManager.createAlarm(alarm)
@@ -32,7 +34,9 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         alarmManager.updateAlarm(alarmModel)
     }
 
-    fun getSingleAlarm(alarmId: Int) = alarmRepository.getSingleAlarm(alarmId)
+    fun getSingleAlarm(alarmId: Int) = viewModelScope.launch {
+        alarmRepository.getSingleAlarm(alarmId)
+    }
 
     fun deleteAlarm(alarmModel: AlarmModel) = viewModelScope.launch {
         alarmRepository.deleteAlarm(alarmModel)

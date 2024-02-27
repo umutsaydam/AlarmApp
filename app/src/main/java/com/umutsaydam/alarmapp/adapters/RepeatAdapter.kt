@@ -1,5 +1,6 @@
 package com.umutsaydam.alarmapp.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ class RepeatAdapter(private val days: List<RepeatDaysItemModel>, private val set
 
         fun checkBoxCheckListener(indexOfDay: Int, setCheckedListener: SetCheckedListener){
             checkBox.setOnCheckedChangeListener{ _, state ->
+                Log.d("R/T", "seçilen $indexOfDay")
                 setCheckedListener.setOnCheckedListener(indexOfDay, state)
             }
         }

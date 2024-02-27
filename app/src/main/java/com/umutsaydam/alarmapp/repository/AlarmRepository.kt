@@ -9,7 +9,7 @@ class AlarmRepository(val db: AlarmDatabase) {
 
     fun getAllAlarms() = db.getAlarmDao().getAllAlarms()
 
-    fun getSingleAlarm(alarmId: Int) = db.getAlarmDao().getSingleAlarm(alarmId)
+    suspend fun getSingleAlarm(alarmId: Int) = db.getAlarmDao().getSingleAlarm(alarmId)
 
     suspend fun deleteAlarm(alarmModel: AlarmModel) = db.getAlarmDao().deleteAlarm(alarmModel)
 }

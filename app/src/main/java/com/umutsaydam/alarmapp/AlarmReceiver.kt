@@ -3,13 +3,40 @@ package com.umutsaydam.alarmapp
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import com.umutsaydam.alarmapp.db.AlarmDatabase
+import com.umutsaydam.alarmapp.helpers.AlarmSchedule
+import com.umutsaydam.alarmapp.helpers.Alarms
+import com.umutsaydam.alarmapp.repository.AlarmRepository
 import com.umutsaydam.alarmapp.ui.TimesUpActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        val myIntent = Intent(context, TimesUpActivity::class.java)
-        myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(myIntent)
+        val alarmId = intent.getIntExtra("alarmId", -1)
+
+        if (alarmId != -1) {
+            val alarmRepository = AlarmRepository(AlarmDatabase(context))
+            val alarmSchedule = AlarmSchedule()
+            val alarm = Alarms(context)
+            CoroutineScope(Dispatchers.IO).launch {
+                val alarmModel = alarmRepository.getSingleAlarm(alarmId)
+                if (alarmModel.alarmRepeat.size > 1) {
+                    alarmModel.alarmTime =
+                        alarmSchedule.alarmReschedule(alarmModel)
+                    alarmRepository.addAlarm(alarmModel)
+                } else {
+                    alarm.deleteAlarm(alarmModel)
+                    alarmRepository.deleteAlarm(alarmModel)
+                }
+                Log.d("R/T", alarmModel.alarmTime.toString())
+            }
+            val myIntent = Intent(context, TimesUpActivity::class.java)
+            myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(myIntent)
+        }
     }
 }
