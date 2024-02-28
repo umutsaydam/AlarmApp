@@ -15,4 +15,5 @@
     <string name="clock_title">Clock Title</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+    <string name="vibrating">Vibrating</string>
 </resources>

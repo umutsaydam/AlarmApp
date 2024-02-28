@@ -8,6 +8,8 @@ import com.umutsaydam.alarmapp.db.AlarmDatabase
 import com.umutsaydam.alarmapp.helpers.AlarmSchedule
 import com.umutsaydam.alarmapp.helpers.Alarms
 import com.umutsaydam.alarmapp.helpers.IAlarmManager
+import com.umutsaydam.alarmapp.helpers.IVibrator
+import com.umutsaydam.alarmapp.helpers.Vibrator
 import com.umutsaydam.alarmapp.repository.AlarmRepository
 import com.umutsaydam.alarmapp.ui.TimesUpActivity
 import kotlinx.coroutines.CoroutineScope
@@ -40,10 +42,12 @@ class AlarmReceiver : BroadcastReceiver() {
                     alarmRepository.deleteAlarm(alarmModel)
                 }
                 Log.d("R/T", alarmModel.alarmTime.toString())
+
+                val myIntent = Intent(context, TimesUpActivity::class.java)
+                myIntent.putExtra("alarmVibrating", alarmModel.alarmVibrating)
+                myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(myIntent)
             }
-            val myIntent = Intent(context, TimesUpActivity::class.java)
-            myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(myIntent)
         }
     }
 }
