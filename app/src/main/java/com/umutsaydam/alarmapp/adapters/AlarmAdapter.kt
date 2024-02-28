@@ -9,10 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.umutsaydam.alarmapp.R
 import com.umutsaydam.alarmapp.databinding.AlarmListItemBinding
 import com.umutsaydam.alarmapp.models.AlarmModel
+import com.umutsaydam.alarmapp.utils.ConvertNumsToDays
 import com.umutsaydam.alarmapp.utils.SetCheckedListener
 import com.umutsaydam.alarmapp.utils.SetClickListener
 
-class AlarmAdapter(private val setOnCheckedListener: SetCheckedListener, private val setClickListener: SetClickListener) :
+class AlarmAdapter(
+    private val setOnCheckedListener: SetCheckedListener,
+    private val setClickListener: SetClickListener,
+) :
     RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder>() {
     private lateinit var binding: AlarmListItemBinding
 
@@ -23,6 +27,12 @@ class AlarmAdapter(private val setOnCheckedListener: SetCheckedListener, private
             itemBinding.tvClockTitle.text = alarm.alarmTitle
             itemBinding.switchAlarmToggle.isChecked = alarm.alarmEnabled
             setCardBackground(alarm.alarmEnabled)
+            itemBinding.tvClockRepeat.text = convertToDays(alarm.alarmRepeat)
+        }
+
+        private fun convertToDays(alarmRepeat: List<Int>): String {
+            val days: String = ConvertNumsToDays.convertNumsToDays(alarmRepeat).toString()
+            return days.replace(Regex("[\\[\\]]"), "")
         }
 
         private fun setCardBackground(alarmEnabled: Boolean) {
@@ -41,7 +51,7 @@ class AlarmAdapter(private val setOnCheckedListener: SetCheckedListener, private
             }
         }
 
-        fun setOnLongClickListener(alarmModel: AlarmModel, setClickListener: SetClickListener){
+        fun setOnLongClickListener(alarmModel: AlarmModel, setClickListener: SetClickListener) {
             itemBinding.cvAlarm.setOnLongClickListener(View.OnLongClickListener {
                 setClickListener.setOnLongClickListener(alarmModel)
                 return@OnLongClickListener true
