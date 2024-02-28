@@ -8,7 +8,7 @@ object ConvertNumsToDays {
 
         val selectedDays: ArrayList<String> = arrayListOf()
         dayNumList.forEach { num ->
-            selectedDays.add(days[num])
+            selectedDays.add(days[num-1])
         }
         return selectedDays
     }
