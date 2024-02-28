@@ -8,6 +8,8 @@ import com.umutsaydam.alarmapp.db.AlarmDatabase
 import com.umutsaydam.alarmapp.helpers.AlarmSchedule
 import com.umutsaydam.alarmapp.helpers.Alarms
 import com.umutsaydam.alarmapp.helpers.IAlarmManager
+import com.umutsaydam.alarmapp.helpers.IVibrator
+import com.umutsaydam.alarmapp.helpers.Vibrator
 import com.umutsaydam.alarmapp.repository.AlarmRepository
 import com.umutsaydam.alarmapp.ui.TimesUpActivity
 import kotlinx.coroutines.CoroutineScope
