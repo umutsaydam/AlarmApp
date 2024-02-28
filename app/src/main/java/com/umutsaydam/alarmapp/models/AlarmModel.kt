@@ -15,12 +15,14 @@ data class AlarmModel(
     var alarmTime: Long = 0,
     var alarmRepeat: List<Int> = listOf(),
     var alarmEnabled: Boolean = true,
+    var alarmVibrating: Boolean = false,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString(),
         parcel.readLong(),
         parcel.createIntArray()?.toList() ?: listOf<Int>(),
+        parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
     ) {
     }
@@ -31,6 +33,7 @@ data class AlarmModel(
         parcel.writeLong(alarmTime)
         parcel.writeList(alarmRepeat)
         parcel.writeByte(if (alarmEnabled) 1 else 0)
+        parcel.writeByte(if (alarmVibrating) 1 else 0)
     }
 
     override fun describeContents(): Int {

@@ -4,7 +4,6 @@ import android.media.Ringtone
 import android.media.RingtoneManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.umutsaydam.alarmapp.R
 import com.umutsaydam.alarmapp.databinding.ActivityTimesUpBinding
 import com.umutsaydam.alarmapp.helpers.IVibrator
 import com.umutsaydam.alarmapp.helpers.Vibrator
@@ -18,9 +17,12 @@ class TimesUpActivity : AppCompatActivity(), IVibrator {
         super.onCreate(savedInstanceState)
         _binding = ActivityTimesUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val alarmVibrating = intent.getBooleanExtra("alarmVibrating", false)
 
-        vibrator = Vibrator(this)
-        startVibrator()
+        if (alarmVibrating) {
+            vibrator = Vibrator(this)
+            startVibrator()
+        }
 
         var alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
 
@@ -32,7 +34,9 @@ class TimesUpActivity : AppCompatActivity(), IVibrator {
         ringtone.play()
 
         binding.btnStopAlarm.setOnClickListener {
-            vibrator.stopVibrator()
+            if (alarmVibrating) {
+                vibrator.stopVibrator()
+            }
             stopAlarm()
         }
     }

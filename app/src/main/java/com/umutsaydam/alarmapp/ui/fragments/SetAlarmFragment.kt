@@ -26,6 +26,7 @@ class SetAlarmFragment : Fragment(), SetCheckedListener {
     private lateinit var viewModel: AlarmViewModel
     private lateinit var selected: Calendar
     private val dayList = ArrayList<Int>()
+    private var alarmVibrating = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,14 +36,7 @@ class SetAlarmFragment : Fragment(), SetCheckedListener {
 
         initViewModel()
         initCalendar()
-
-        binding.btAlarmSave.setOnClickListener {
-            val title = binding.tvClockTitle.text.toString()
-            Log.d("R/T", "$dayList")
-            viewModel.addAlarm(title, timeInMillis, dayList).invokeOnCompletion {
-                findNavController().popBackStack()
-            }
-        }
+        initUI()
 
         val days = listOf(
             RepeatDaysItemModel("S"),
@@ -61,6 +55,25 @@ class SetAlarmFragment : Fragment(), SetCheckedListener {
         }
 
         return binding.root
+    }
+
+    private fun initUI() {
+        binding.btAlarmSave.setOnClickListener {
+            val title = binding.tvClockTitle.text.toString()
+            Log.d("R/T", "$dayList")
+            viewModel.addAlarm(title, timeInMillis, dayList, alarmVibrating).invokeOnCompletion {
+                findNavController().popBackStack()
+            }
+        }
+
+        binding.switchVibrating.setOnCheckedChangeListener { p0, p1 ->
+            alarmVibrating = p1
+        }
+
+        binding.linearLayoutVibrating.setOnClickListener {
+            alarmVibrating = !alarmVibrating
+            binding.switchVibrating.isChecked = alarmVibrating
+        }
     }
 
     private fun initCalendar() {

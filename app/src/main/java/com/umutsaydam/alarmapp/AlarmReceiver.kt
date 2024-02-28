@@ -42,10 +42,12 @@ class AlarmReceiver : BroadcastReceiver() {
                     alarmRepository.deleteAlarm(alarmModel)
                 }
                 Log.d("R/T", alarmModel.alarmTime.toString())
+
+                val myIntent = Intent(context, TimesUpActivity::class.java)
+                myIntent.putExtra("alarmVibrating", alarmModel.alarmVibrating)
+                myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(myIntent)
             }
-            val myIntent = Intent(context, TimesUpActivity::class.java)
-            myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(myIntent)
         }
     }
 }
