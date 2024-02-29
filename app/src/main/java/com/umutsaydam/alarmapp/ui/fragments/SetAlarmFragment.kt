@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.umutsaydam.alarmapp.adapters.RepeatAdapter
 import com.umutsaydam.alarmapp.databinding.FragmentSetAlarmBinding
 import com.umutsaydam.alarmapp.db.AlarmDatabase
+import com.umutsaydam.alarmapp.helpers.IRingtoneSelector
+import com.umutsaydam.alarmapp.helpers.RingtoneSelector
 import com.umutsaydam.alarmapp.models.RepeatDaysItemModel
 import com.umutsaydam.alarmapp.repository.AlarmRepository
 import com.umutsaydam.alarmapp.ui.viewmodels.AlarmViewModel
@@ -19,7 +21,7 @@ import com.umutsaydam.alarmapp.ui.viewmodels.AlarmsViewModelFactory
 import com.umutsaydam.alarmapp.utils.SetCheckedListener
 import java.util.Calendar
 
-class SetAlarmFragment : Fragment(), SetCheckedListener {
+class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
     private var _binding: FragmentSetAlarmBinding? = null
     private val binding get() = _binding!!
     private var timeInMillis: Long = 0
@@ -27,6 +29,8 @@ class SetAlarmFragment : Fragment(), SetCheckedListener {
     private lateinit var selected: Calendar
     private val dayList = ArrayList<Int>()
     private var alarmVibrating = false
+    private var alarmRingtoneUri: String? = null
+    private lateinit var ringtoneSelector: IRingtoneSelector
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +38,7 @@ class SetAlarmFragment : Fragment(), SetCheckedListener {
     ): View {
         _binding = FragmentSetAlarmBinding.inflate(inflater, container, false)
 
+        ringtoneSelector = RingtoneSelector(this)
         initViewModel()
         initCalendar()
         initUI()
@@ -61,9 +66,11 @@ class SetAlarmFragment : Fragment(), SetCheckedListener {
         binding.btAlarmSave.setOnClickListener {
             val title = binding.tvClockTitle.text.toString()
             Log.d("R/T", "$dayList")
-            viewModel.addAlarm(title, timeInMillis, dayList, alarmVibrating).invokeOnCompletion {
-                findNavController().popBackStack()
-            }
+            alarmRingtoneUri = ringtoneSelector.currentRingtone()
+            viewModel.addAlarm(title, timeInMillis, dayList, alarmVibrating, alarmRingtoneUri)
+                .invokeOnCompletion {
+                    findNavController().popBackStack()
+                }
         }
 
         binding.switchVibrating.setOnCheckedChangeListener { p0, p1 ->
@@ -73,6 +80,10 @@ class SetAlarmFragment : Fragment(), SetCheckedListener {
         binding.linearLayoutVibrating.setOnClickListener {
             alarmVibrating = !alarmVibrating
             binding.switchVibrating.isChecked = alarmVibrating
+        }
+
+        binding.linearLayoutRingtone.setOnClickListener {
+            ringtoneSelector.selectRingtone()
         }
     }
 
@@ -104,6 +115,18 @@ class SetAlarmFragment : Fragment(), SetCheckedListener {
                 AlarmRepository(AlarmDatabase(requireContext()))
             )
         )[AlarmViewModel::class.java]
+    }
+
+    override fun selectRingtone() {
+        ringtoneSelector.selectRingtone()
+    }
+
+    override fun selectDefaultRingtone() {
+        ringtoneSelector.selectDefaultRingtone()
+    }
+
+    override fun currentRingtone(): String {
+        return ringtoneSelector.currentRingtone()
     }
 
     override fun onDestroy() {

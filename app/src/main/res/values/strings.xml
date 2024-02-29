@@ -16,4 +16,6 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="vibrating">Vibrating</string>
+    <string name="ringtone">Ringtone</string>
+    <string name="default_ringtone">Default</string>
 </resources>

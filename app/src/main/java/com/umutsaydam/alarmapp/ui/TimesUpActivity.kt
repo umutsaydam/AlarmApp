@@ -1,43 +1,44 @@
 package com.umutsaydam.alarmapp.ui
 
-import android.media.Ringtone
-import android.media.RingtoneManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.umutsaydam.alarmapp.databinding.ActivityTimesUpBinding
+import com.umutsaydam.alarmapp.helpers.IRingtonePlayer
 import com.umutsaydam.alarmapp.helpers.IVibrator
+import com.umutsaydam.alarmapp.helpers.RingtonePlayer
 import com.umutsaydam.alarmapp.helpers.Vibrator
 
-class TimesUpActivity : AppCompatActivity(), IVibrator {
-    private lateinit var ringtone: Ringtone
+class TimesUpActivity : AppCompatActivity(), IVibrator, IRingtonePlayer {
     private lateinit var vibrator: IVibrator
     private var _binding: ActivityTimesUpBinding? = null
     private val binding get() = _binding!!
+    private lateinit var ringtonePlayer: IRingtonePlayer
+    private var alarmVibrating = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityTimesUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val alarmVibrating = intent.getBooleanExtra("alarmVibrating", false)
+
+        alarmVibrating = intent.getBooleanExtra("alarmVibrating", false)
+
+        val alarmRingtoneUri = intent.getStringExtra("alarmRingtoneUri")
+        ringtonePlayer = RingtonePlayer(this, alarmRingtoneUri!!)
+        playRingtone()
 
         if (alarmVibrating) {
             vibrator = Vibrator(this)
             startVibrator()
         }
 
-        var alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        initUI()
+    }
 
-        if (alarmUri == null) {
-            alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        }
-
-        ringtone = RingtoneManager.getRingtone(this, alarmUri)
-        ringtone.play()
-
+    private fun initUI() {
         binding.btnStopAlarm.setOnClickListener {
             if (alarmVibrating) {
                 vibrator.stopVibrator()
             }
-            stopAlarm()
+            stopRingtone()
         }
     }
 
@@ -46,11 +47,14 @@ class TimesUpActivity : AppCompatActivity(), IVibrator {
     }
 
     override fun stopVibrator() {
-        super.stopVibrator()
+        vibrator.stopVibrator()
     }
 
-    private fun stopAlarm() {
-        if (ringtone.isPlaying)
-            ringtone.stop()
+    override fun playRingtone() {
+        ringtonePlayer.playRingtone()
+    }
+
+    override fun stopRingtone() {
+        ringtonePlayer.stopRingtone()
     }
 }
