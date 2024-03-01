@@ -51,7 +51,7 @@ class AlarmSchedule : IAlarmSchedule {
         } else {
             (nextDay + 7 - todayTime) % 7
         }
-
+        Log.d("R/T", "$daysToAdd *******")
         calendar.timeInMillis = System.currentTimeMillis()
         calendar[Calendar.HOUR_OF_DAY] = alarmHour
         calendar[Calendar.MINUTE] = alarmMinute

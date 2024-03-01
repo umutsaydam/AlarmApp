@@ -22,14 +22,23 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         timeInMillis: Long,
         alarmRepeat: ArrayList<Int>,
         alarmVibrating: Boolean,
-        alarmRingtoneUri: String?
+        alarmRingtoneUri: String?,
     ) =
         viewModelScope.launch {
             alarmRepeat.sort()
             if (alarmRepeat.isEmpty()) alarmRepeat.addAll((1..7).map { it })
             Log.d("R/T", "$alarmRepeat.toString() viewmodel")
-//            val rescheduledTime = alarmSchedule.alarmReschedule(alarmModel)
-            val alarm = AlarmModel(0, alarmTitle, timeInMillis, alarmRepeat, true, alarmVibrating, alarmRingtoneUri)
+            val alarm = AlarmModel(
+                0,
+                alarmTitle,
+                timeInMillis,
+                alarmRepeat,
+                true,
+                alarmVibrating,
+                alarmRingtoneUri
+            )
+            val rescheduledTime = alarmSchedule.alarmReschedule(alarm)
+            alarm.alarmTime = rescheduledTime
             val alarmId = alarmRepository.addAlarm(alarm).toInt()
             alarm.alarmId = alarmId
             alarmManager.createAlarm(alarm)
