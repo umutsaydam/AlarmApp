@@ -57,6 +57,12 @@ class AlarmAdapter(
                 return@OnLongClickListener true
             })
         }
+
+        fun setOnClickListener(alarmModel: AlarmModel, setClickListener: SetClickListener){
+            itemBinding.cvAlarm.setOnClickListener {
+                setClickListener.setOnClickListener(alarmModel)
+            }
+        }
     }
 
     private val differCallback = object : DiffUtil.ItemCallback<AlarmModel>() {
@@ -81,6 +87,7 @@ class AlarmAdapter(
 
         holder.setCheckedListener(differ.currentList[position], setOnCheckedListener)
         holder.setOnLongClickListener(differ.currentList[position], setClickListener)
+        holder.setOnClickListener(differ.currentList[position], setClickListener)
     }
 
     override fun getItemCount(): Int {

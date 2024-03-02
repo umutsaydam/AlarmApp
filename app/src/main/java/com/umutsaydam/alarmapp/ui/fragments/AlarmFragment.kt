@@ -61,6 +61,12 @@ class AlarmFragment : Fragment(), SetCheckedListener, SetClickListener {
         dialog.show()
     }
 
+    override fun setOnClickListener(alarmModel: AlarmModel) {
+        val bundle = Bundle()
+        bundle.putParcelable("alarmModel", alarmModel)
+        findNavController().navigate(R.id.action_alarmFragment_to_setAlarmFragment, bundle)
+    }
+
     private fun initViewModel() {
         viewModel = ViewModelProvider(
             this,

@@ -25,14 +25,13 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         alarmRingtoneUri: String?,
     ) =
         viewModelScope.launch {
-            alarmRepeat.sort()
-            if (alarmRepeat.isEmpty()) alarmRepeat.addAll((1..7).map { it })
+            val organizedAlarmRepeat = checkAlarmRepeat(alarmRepeat) as ArrayList<Int>
             Log.d("R/T", "$alarmRepeat.toString() viewmodel")
             val alarm = AlarmModel(
                 0,
                 alarmTitle,
                 timeInMillis,
-                alarmRepeat,
+                organizedAlarmRepeat,
                 true,
                 alarmVibrating,
                 alarmRingtoneUri
@@ -45,6 +44,9 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         }
 
     fun updateAlarm(alarmModel: AlarmModel) = viewModelScope.launch {
+        alarmModel.alarmRepeat = checkAlarmRepeat(alarmModel.alarmRepeat as ArrayList<Int>)
+        val rescheduledTime = alarmSchedule.alarmReschedule(alarmModel)
+        alarmModel.alarmTime = rescheduledTime
         alarmRepository.addAlarm(alarmModel)
         alarmManager.updateAlarm(alarmModel)
     }
@@ -56,5 +58,11 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
     fun deleteAlarm(alarmModel: AlarmModel) = viewModelScope.launch {
         alarmRepository.deleteAlarm(alarmModel)
         alarmManager.deleteAlarm(alarmModel)
+    }
+
+    fun checkAlarmRepeat(alarmRepeat: ArrayList<Int>): List<Int>{
+        alarmRepeat.sort()
+        if (alarmRepeat.isEmpty()) alarmRepeat.addAll((1..7).map { it })
+        return alarmRepeat
     }
 }

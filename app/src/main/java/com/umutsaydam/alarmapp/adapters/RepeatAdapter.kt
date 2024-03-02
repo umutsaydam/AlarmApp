@@ -10,14 +10,18 @@ import com.umutsaydam.alarmapp.R
 import com.umutsaydam.alarmapp.models.RepeatDaysItemModel
 import com.umutsaydam.alarmapp.utils.SetCheckedListener
 
-class RepeatAdapter(private val days: List<RepeatDaysItemModel>, private val setCheckedListener: SetCheckedListener) :
+class RepeatAdapter(
+    private val days: List<RepeatDaysItemModel>,
+    private val selectedDays: List<Int>? = null,
+    private val setCheckedListener: SetCheckedListener,
+) :
     RecyclerView.Adapter<RepeatAdapter.RepeatHolder>() {
 
     class RepeatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var checkBox: CheckBox = itemView.findViewById(R.id.cbRepeatDay)
 
-        fun checkBoxCheckListener(indexOfDay: Int, setCheckedListener: SetCheckedListener){
-            checkBox.setOnCheckedChangeListener{ _, state ->
+        fun checkBoxCheckListener(indexOfDay: Int, setCheckedListener: SetCheckedListener) {
+            checkBox.setOnCheckedChangeListener { _, state ->
                 Log.d("R/T", "seçilen $indexOfDay")
                 setCheckedListener.setOnCheckedListener(indexOfDay, state)
             }
@@ -37,6 +41,7 @@ class RepeatAdapter(private val days: List<RepeatDaysItemModel>, private val set
     override fun onBindViewHolder(holder: RepeatHolder, position: Int) {
         val day = days[position]
         holder.checkBox.text = day.checkBoxTitle
-        holder.checkBoxCheckListener(position+1, setCheckedListener)
+        if (selectedDays != null && selectedDays.contains(position+1)) holder.checkBox.isChecked = true
+        holder.checkBoxCheckListener(position + 1, setCheckedListener)
     }
 }

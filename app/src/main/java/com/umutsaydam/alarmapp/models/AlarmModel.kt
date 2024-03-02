@@ -11,12 +11,12 @@ import androidx.room.TypeConverters
 data class AlarmModel(
     @PrimaryKey(autoGenerate = true)
     var alarmId: Int,
-    val alarmTitle: String? = "",
+    var alarmTitle: String? = "",
     var alarmTime: Long = 0,
     var alarmRepeat: List<Int> = listOf(),
     var alarmEnabled: Boolean = true,
     var alarmVibrating: Boolean = false,
-    val alarmRingtoneUri: String? = "",
+    var alarmRingtoneUri: String? = "",
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
