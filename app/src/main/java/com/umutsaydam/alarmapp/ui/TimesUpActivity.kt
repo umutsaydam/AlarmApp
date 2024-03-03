@@ -1,12 +1,19 @@
 package com.umutsaydam.alarmapp.ui
 
+import android.annotation.SuppressLint
+import android.content.ClipData
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.DragEvent
+import android.view.View
 import com.umutsaydam.alarmapp.databinding.ActivityTimesUpBinding
 import com.umutsaydam.alarmapp.helpers.IRingtonePlayer
 import com.umutsaydam.alarmapp.helpers.IVibrator
 import com.umutsaydam.alarmapp.helpers.RingtonePlayer
 import com.umutsaydam.alarmapp.helpers.Vibrator
+import com.umutsaydam.alarmapp.models.AlarmModel
 
 class TimesUpActivity : AppCompatActivity(), IVibrator, IRingtonePlayer {
     private lateinit var vibrator: IVibrator
@@ -14,14 +21,25 @@ class TimesUpActivity : AppCompatActivity(), IVibrator, IRingtonePlayer {
     private val binding get() = _binding!!
     private lateinit var ringtonePlayer: IRingtonePlayer
     private var alarmVibrating = false
+    private lateinit var alarmModel: AlarmModel
+    private var alarmRingtoneUri: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityTimesUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        alarmVibrating = intent.getBooleanExtra("alarmVibrating", false)
+        val bundle = intent.getBundleExtra("alarmModelBundle")
 
-        val alarmRingtoneUri = intent.getStringExtra("alarmRingtoneUri")
+        bundle?.let {
+            alarmModel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                it.getParcelable("alarmModel", AlarmModel::class.java)!!
+            } else {
+                it.getParcelable("alarmModel")!!
+            }
+        }
+        alarmVibrating = alarmModel.alarmVibrating
+
+        alarmRingtoneUri = alarmModel.alarmRingtoneUri
         ringtonePlayer = RingtonePlayer(this, alarmRingtoneUri!!)
         playRingtone()
 
@@ -33,12 +51,46 @@ class TimesUpActivity : AppCompatActivity(), IVibrator, IRingtonePlayer {
         initUI()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initUI() {
-        binding.btnStopAlarm.setOnClickListener {
-            if (alarmVibrating) {
-                vibrator.stopVibrator()
+        binding.tvAlarmTitle.text = alarmModel.alarmTitle
+
+
+        binding.fbStopAlarm.setOnTouchListener { view, motionEvent ->
+            val data = ClipData.newPlainText("", "word")
+            val showBuilder = View.DragShadowBuilder(binding.fbStopAlarm)
+            binding.fbStopAlarm.startDragAndDrop(data, showBuilder, binding.fbStopAlarm, 0)
+            true
+        }
+
+        binding.fbStopAlarm.setOnDragListener { p0, dragEvent ->
+            when (dragEvent.action) {
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    Log.d("R/T", "Started")
+                    binding.fbStopAlarm.visibility = View.GONE
+                }
+
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    Log.d("R/T", "Entered")
+                }
+
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    Log.d("R/T", "EXITED")
+                    // stop music etc.
+                    if (alarmVibrating) {
+                        vibrator.stopVibrator()
+                    }
+                    stopRingtone()
+                    finish()
+                }
+
+                DragEvent.ACTION_DRAG_ENDED -> {
+                    Log.d("R/T", "Stopped")
+                    binding.fbStopAlarm.visibility = View.VISIBLE
+                }
+
             }
-            stopRingtone()
+            true
         }
     }
 

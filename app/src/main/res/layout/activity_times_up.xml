@@ -7,20 +7,22 @@
     tools:context=".ui.TimesUpActivity">
 
     <TextView
+        android:id="@+id/tvAlarmTitle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Times up" />
+        android:gravity="center" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnStopAlarm"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fbStopAlarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Stop alarm"
-        app:layout_constraintVertical_bias="0.6"
+        android:src="@drawable/ic_alarm_off"
+        android:background="@drawable/circle_bg"
+        app:layout_constraintVertical_bias="0.9"
+        app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/alarm_off" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,4 +18,5 @@
     <string name="vibrating">Vibrating</string>
     <string name="ringtone">Ringtone</string>
     <string name="default_ringtone">Default</string>
+    <string name="alarm_off">Alarm off</string>
 </resources>
