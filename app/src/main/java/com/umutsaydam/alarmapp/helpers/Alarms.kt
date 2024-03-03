@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import com.umutsaydam.alarmapp.AlarmReceiver
 import com.umutsaydam.alarmapp.models.AlarmModel
@@ -28,6 +27,7 @@ class Alarms(private val context: Context) :
 
     override fun updateAlarm(alarmModel: AlarmModel) {
         val intent = Intent(context, AlarmReceiver::class.java)
+        intent.putExtra("alarmId", alarmModel.alarmId)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             alarmModel.alarmId,

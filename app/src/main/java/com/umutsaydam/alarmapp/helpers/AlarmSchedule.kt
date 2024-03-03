@@ -7,35 +7,43 @@ import java.util.Calendar
 class AlarmSchedule : IAlarmSchedule {
     private val calendar: Calendar = Calendar.getInstance()
 
-   /* override fun alarmReschedule(alarmTime: Long, alarmRepeat: List<Int>): Long {
-        val today = calendar[Calendar.DAY_OF_WEEK]
+    /* override fun alarmReschedule(alarmTime: Long, alarmRepeat: List<Int>): Long {
+         val today = calendar[Calendar.DAY_OF_WEEK]
 
-        return if (alarmRepeat.contains(today) && calendar.timeInMillis < alarmTime) {
-            alarmTime
-        } else {
-            calendar.timeInMillis = alarmTime
-            Log.d("R/T", alarmRepeat.toString())
-            val firstDay = alarmRepeat.find { it > today }
-            Log.d("R/T", firstDay.toString())
-            if (firstDay == null) {
-                alarmTime + ((7 - today + alarmRepeat[0]) * 24 * 60 * 60 * 1000)
-            } else {
-                alarmTime + ((firstDay - today) * 24 * 60 * 60 * 1000)
-            }
-        }
-    }*/
+         return if (alarmRepeat.contains(today) && calendar.timeInMillis < alarmTime) {
+             alarmTime
+         } else {
+             calendar.timeInMillis = alarmTime
+             Log.d("R/T", alarmRepeat.toString())
+             val firstDay = alarmRepeat.find { it > today }
+             Log.d("R/T", firstDay.toString())
+             if (firstDay == null) {
+                 alarmTime + ((7 - today + alarmRepeat[0]) * 24 * 60 * 60 * 1000)
+             } else {
+                 alarmTime + ((firstDay - today) * 24 * 60 * 60 * 1000)
+             }
+         }
+     }*/
 
     override fun alarmReschedule(alarmModel: AlarmModel): Long {
         val today = calendar[Calendar.DAY_OF_WEEK]
+        Log.d("R/T", "$today *******")
         val currentTime = calendar[Calendar.HOUR_OF_DAY] * 60 + calendar[Calendar.MINUTE]
-        val nextAlarmTime = if (alarmModel.alarmRepeat.isNotEmpty()) {
-            var nextDay = alarmModel.alarmRepeat.firstOrNull { it > today }
-            if (nextDay == null) nextDay = alarmModel.alarmRepeat.first()
-            calculateNextAlarmTime(currentTime, nextDay, alarmModel.alarmTime)
-        } else {
-            calculateNextAlarmTime(currentTime, today, alarmModel.alarmTime)
-        }
 
+        val nextAlarmTime =
+            if (alarmModel.alarmRepeat.contains(today) && alarmModel.alarmTime > calendar.timeInMillis) {
+                calculateNextAlarmTime(currentTime, today, alarmModel.alarmTime)
+            } else {
+                val nextDay = alarmModel.alarmRepeat.firstOrNull { it > today }
+                val prevDay = alarmModel.alarmRepeat.firstOrNull { it < today }
+                if (nextDay != null) {
+                    calculateNextAlarmTime(currentTime, nextDay, alarmModel.alarmTime)
+                } else if (prevDay != null) {
+                    calculateNextAlarmTime(currentTime, prevDay, alarmModel.alarmTime)
+                } else {
+                    calculateNextAlarmTime(currentTime, today+7, alarmModel.alarmTime)
+                }
+            }
         return nextAlarmTime
     }
 
@@ -51,7 +59,7 @@ class AlarmSchedule : IAlarmSchedule {
         } else {
             (nextDay + 7 - todayTime) % 7
         }
-
+        Log.d("R/T", "$daysToAdd *******")
         calendar.timeInMillis = System.currentTimeMillis()
         calendar[Calendar.HOUR_OF_DAY] = alarmHour
         calendar[Calendar.MINUTE] = alarmMinute
