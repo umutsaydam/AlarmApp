@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.DragEvent
 import android.view.View
+import android.view.animation.AnimationUtils
+import com.umutsaydam.alarmapp.R
 import com.umutsaydam.alarmapp.databinding.ActivityTimesUpBinding
 import com.umutsaydam.alarmapp.helpers.IRingtonePlayer
 import com.umutsaydam.alarmapp.helpers.IVibrator
@@ -92,6 +94,13 @@ class TimesUpActivity : AppCompatActivity(), IVibrator, IRingtonePlayer {
             }
             true
         }
+
+        startAlphaAnim()
+    }
+
+    private fun startAlphaAnim() {
+        val animation = AnimationUtils.loadAnimation(this, R.anim.alpha_animation)
+        binding.ivs.startAnimation(animation)
     }
 
     override fun startVibrator() {
