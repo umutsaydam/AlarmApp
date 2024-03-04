@@ -31,11 +31,7 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
                 0,
                 alarmTitle,
                 timeInMillis,
-<<<<<<< HEAD
                 organizedAlarmRepeat,
-=======
-                alarmRepeat,
->>>>>>> alarmHelperFeature
                 true,
                 alarmVibrating,
                 alarmRingtoneUri
@@ -64,7 +60,7 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         alarmManager.deleteAlarm(alarmModel)
     }
 
-    fun checkAlarmRepeat(alarmRepeat: ArrayList<Int>): List<Int>{
+    fun checkAlarmRepeat(alarmRepeat: ArrayList<Int>): List<Int> {
         alarmRepeat.sort()
         if (alarmRepeat.isEmpty()) alarmRepeat.addAll((1..7).map { it })
         return alarmRepeat
