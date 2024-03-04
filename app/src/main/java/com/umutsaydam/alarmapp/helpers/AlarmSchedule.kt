@@ -1,45 +1,49 @@
 package com.umutsaydam.alarmapp.helpers
 
-import android.util.Log
 import com.umutsaydam.alarmapp.models.AlarmModel
 import java.util.Calendar
 
 class AlarmSchedule : IAlarmSchedule {
-    private val calendar: Calendar = Calendar.getInstance()
+    // private val calendar: Calendar = Calendar.getInstance()
 
-   /* override fun alarmReschedule(alarmTime: Long, alarmRepeat: List<Int>): Long {
-        val today = calendar[Calendar.DAY_OF_WEEK]
+    /* override fun alarmReschedule(alarmTime: Long, alarmRepeat: List<Int>): Long {
+         val today = calendar[Calendar.DAY_OF_WEEK]
 
-        return if (alarmRepeat.contains(today) && calendar.timeInMillis < alarmTime) {
-            alarmTime
-        } else {
-            calendar.timeInMillis = alarmTime
-            Log.d("R/T", alarmRepeat.toString())
-            val firstDay = alarmRepeat.find { it > today }
-            Log.d("R/T", firstDay.toString())
-            if (firstDay == null) {
-                alarmTime + ((7 - today + alarmRepeat[0]) * 24 * 60 * 60 * 1000)
-            } else {
-                alarmTime + ((firstDay - today) * 24 * 60 * 60 * 1000)
-            }
-        }
-    }*/
+         return if (alarmRepeat.contains(today) && calendar.timeInMillis < alarmTime) {
+             alarmTime
+         } else {
+             calendar.timeInMillis = alarmTime
+             Log.d("R/T", alarmRepeat.toString())
+             val firstDay = alarmRepeat.find { it > today }
+             Log.d("R/T", firstDay.toString())
+             if (firstDay == null) {
+                 alarmTime + ((7 - today + alarmRepeat[0]) * 24 * 60 * 60 * 1000)
+             } else {
+                 alarmTime + ((firstDay - today) * 24 * 60 * 60 * 1000)
+             }
+         }
+     }*/
 
     override fun alarmReschedule(alarmModel: AlarmModel): Long {
+        val calendar: Calendar = Calendar.getInstance()
         val today = calendar[Calendar.DAY_OF_WEEK]
         val currentTime = calendar[Calendar.HOUR_OF_DAY] * 60 + calendar[Calendar.MINUTE]
-        val nextAlarmTime = if (alarmModel.alarmRepeat.isNotEmpty()) {
-            var nextDay = alarmModel.alarmRepeat.firstOrNull { it > today }
-            if (nextDay == null) nextDay = alarmModel.alarmRepeat.first()
-            calculateNextAlarmTime(currentTime, nextDay, alarmModel.alarmTime)
-        } else {
-            calculateNextAlarmTime(currentTime, today, alarmModel.alarmTime)
-        }
+        val targetAlarmTime =
+            if (alarmModel.alarmRepeat.contains(today) && alarmModel.alarmTime > calendar.timeInMillis) {
+                alarmModel.alarmTime
+            } else if (alarmModel.alarmRepeat.isNotEmpty()) {
+                var nextDay = alarmModel.alarmRepeat.firstOrNull { it > today }
+                if (nextDay == null) nextDay = alarmModel.alarmRepeat.first()
+                calculateNextAlarmTime(currentTime, nextDay, alarmModel.alarmTime)
+            } else {
+                calculateNextAlarmTime(currentTime, today, alarmModel.alarmTime)
+            }
 
-        return nextAlarmTime
+        return targetAlarmTime
     }
 
     private fun calculateNextAlarmTime(currentTime: Int, nextDay: Int, alarmTime: Long): Long {
+        val calendar: Calendar = Calendar.getInstance()
         calendar.timeInMillis = alarmTime
         val alarmHour = calendar[Calendar.HOUR_OF_DAY]
         val alarmMinute = calendar[Calendar.MINUTE]
