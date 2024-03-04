@@ -31,7 +31,11 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
                 0,
                 alarmTitle,
                 timeInMillis,
+<<<<<<< HEAD
                 organizedAlarmRepeat,
+=======
+                alarmRepeat,
+>>>>>>> alarmHelperFeature
                 true,
                 alarmVibrating,
                 alarmRingtoneUri

@@ -1,11 +1,10 @@
 package com.umutsaydam.alarmapp.helpers
 
-import android.util.Log
 import com.umutsaydam.alarmapp.models.AlarmModel
 import java.util.Calendar
 
 class AlarmSchedule : IAlarmSchedule {
-    private val calendar: Calendar = Calendar.getInstance()
+    // private val calendar: Calendar = Calendar.getInstance()
 
     /* override fun alarmReschedule(alarmTime: Long, alarmRepeat: List<Int>): Long {
          val today = calendar[Calendar.DAY_OF_WEEK]
@@ -26,28 +25,26 @@ class AlarmSchedule : IAlarmSchedule {
      }*/
 
     override fun alarmReschedule(alarmModel: AlarmModel): Long {
+        val calendar: Calendar = Calendar.getInstance()
         val today = calendar[Calendar.DAY_OF_WEEK]
-        Log.d("R/T", "$today *******")
         val currentTime = calendar[Calendar.HOUR_OF_DAY] * 60 + calendar[Calendar.MINUTE]
 
-        val nextAlarmTime =
+        val targetAlarmTime =
             if (alarmModel.alarmRepeat.contains(today) && alarmModel.alarmTime > calendar.timeInMillis) {
-                calculateNextAlarmTime(currentTime, today, alarmModel.alarmTime)
+                alarmModel.alarmTime
+            } else if (alarmModel.alarmRepeat.isNotEmpty()) {
+                var nextDay = alarmModel.alarmRepeat.firstOrNull { it > today }
+                if (nextDay == null) nextDay = alarmModel.alarmRepeat.first()
+                calculateNextAlarmTime(currentTime, nextDay, alarmModel.alarmTime)
             } else {
-                val nextDay = alarmModel.alarmRepeat.firstOrNull { it > today }
-                val prevDay = alarmModel.alarmRepeat.firstOrNull { it < today }
-                if (nextDay != null) {
-                    calculateNextAlarmTime(currentTime, nextDay, alarmModel.alarmTime)
-                } else if (prevDay != null) {
-                    calculateNextAlarmTime(currentTime, prevDay, alarmModel.alarmTime)
-                } else {
-                    calculateNextAlarmTime(currentTime, today+7, alarmModel.alarmTime)
-                }
+                calculateNextAlarmTime(currentTime, today, alarmModel.alarmTime)
             }
-        return nextAlarmTime
+
+        return targetAlarmTime
     }
 
     private fun calculateNextAlarmTime(currentTime: Int, nextDay: Int, alarmTime: Long): Long {
+        val calendar: Calendar = Calendar.getInstance()
         calendar.timeInMillis = alarmTime
         val alarmHour = calendar[Calendar.HOUR_OF_DAY]
         val alarmMinute = calendar[Calendar.MINUTE]
@@ -59,7 +56,6 @@ class AlarmSchedule : IAlarmSchedule {
         } else {
             (nextDay + 7 - todayTime) % 7
         }
-        Log.d("R/T", "$daysToAdd *******")
         calendar.timeInMillis = System.currentTimeMillis()
         calendar[Calendar.HOUR_OF_DAY] = alarmHour
         calendar[Calendar.MINUTE] = alarmMinute
