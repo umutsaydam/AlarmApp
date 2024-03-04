@@ -3,6 +3,7 @@ package com.umutsaydam.alarmapp
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import com.umutsaydam.alarmapp.db.AlarmDatabase
 import com.umutsaydam.alarmapp.helpers.AlarmSchedule
@@ -26,6 +27,7 @@ class AlarmReceiver : BroadcastReceiver() {
             val schedule = AlarmSchedule()
             alarmSchedule = schedule
         }
+
         val alarmId = intent.getIntExtra("alarmId", -1)
         if (alarmId != -1) {
             val alarmRepository = AlarmRepository(AlarmDatabase(context))
@@ -42,8 +44,10 @@ class AlarmReceiver : BroadcastReceiver() {
                 Log.d("R/T", alarmModel.alarmTime.toString())
 
                 val myIntent = Intent(context, TimesUpActivity::class.java)
-                myIntent.putExtra("alarmVibrating", alarmModel.alarmVibrating)
-                myIntent.putExtra("alarmRingtoneUri", alarmModel.alarmRingtoneUri)
+
+                val bundle = Bundle()
+                bundle.putParcelable("alarmModel", alarmModel)
+                myIntent.putExtra("alarmModelBundle", bundle)
 
                 myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(myIntent)
