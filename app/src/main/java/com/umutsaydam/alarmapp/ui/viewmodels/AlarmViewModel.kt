@@ -23,6 +23,7 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         alarmRepeat: ArrayList<Int>,
         alarmVibrating: Boolean,
         alarmRingtoneUri: String?,
+        alarmHourMinuteFormat: String,
     ) =
         viewModelScope.launch {
             val organizedAlarmRepeat = checkAlarmRepeat(alarmRepeat) as ArrayList<Int>
@@ -35,7 +36,8 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
                 organizedAlarmRepeat,
                 true,
                 alarmVibrating,
-                alarmRingtoneUri
+                alarmRingtoneUri,
+                alarmHourMinuteFormat
             )
             val rescheduledTime = alarmSchedule.alarmReschedule(alarm)
             alarm.alarmTime = rescheduledTime

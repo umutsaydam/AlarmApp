@@ -17,6 +17,7 @@ data class AlarmModel(
     var alarmEnabled: Boolean = true,
     var alarmVibrating: Boolean = false,
     var alarmRingtoneUri: String? = "",
+    var alarmHourMinuteFormat: String? = "",
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
@@ -25,6 +26,7 @@ data class AlarmModel(
         parcel.createIntArray()?.toList() ?: listOf<Int>(),
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
+        parcel.readString(),
         parcel.readString(),
     ) {
     }
@@ -37,6 +39,7 @@ data class AlarmModel(
         parcel.writeByte(if (alarmEnabled) 1 else 0)
         parcel.writeByte(if (alarmVibrating) 1 else 0)
         parcel.writeString(alarmRingtoneUri)
+        parcel.writeString(alarmHourMinuteFormat)
     }
 
     override fun describeContents(): Int {

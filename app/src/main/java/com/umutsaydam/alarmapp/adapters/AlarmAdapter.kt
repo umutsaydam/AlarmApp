@@ -23,7 +23,7 @@ class AlarmAdapter(
     class AlarmViewHolder(private val itemBinding: AlarmListItemBinding) :
         RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(alarm: AlarmModel) {
-            itemBinding.tvClockTime.text = alarm.alarmTime.toString()
+            itemBinding.tvClockTime.text = alarm.alarmHourMinuteFormat
             itemBinding.tvClockTitle.text = alarm.alarmTitle
             itemBinding.switchAlarmToggle.isChecked = alarm.alarmEnabled
             setCardBackground(alarm.alarmEnabled)

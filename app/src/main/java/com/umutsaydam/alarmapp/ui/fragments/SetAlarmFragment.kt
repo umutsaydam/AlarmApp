@@ -23,6 +23,7 @@ import com.umutsaydam.alarmapp.ui.viewmodels.AlarmViewModel
 import com.umutsaydam.alarmapp.ui.viewmodels.AlarmsViewModelFactory
 import com.umutsaydam.alarmapp.utils.Constants.EDIT_MODE_OFF
 import com.umutsaydam.alarmapp.utils.Constants.EDIT_MODE_ON
+import com.umutsaydam.alarmapp.utils.ConverterHoursMinutesFormat
 import com.umutsaydam.alarmapp.utils.SetCheckedListener
 import java.util.Calendar
 import java.util.Date
@@ -39,7 +40,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
     private lateinit var ringtoneSelector: IRingtoneSelector
     private var editState = EDIT_MODE_OFF
     private var editAlarmModel: AlarmModel? = null
-
+    private var hourMinuteFormat = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -89,7 +90,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
     private fun initEditAlarmUI(editAlarmModel: AlarmModel) {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = editAlarmModel.alarmTime
-
+        hourMinuteFormat = editAlarmModel.alarmHourMinuteFormat!!
         binding.tvClockTitle.setText(editAlarmModel.alarmTitle)
         binding.switchVibrating.isChecked = editAlarmModel.alarmVibrating
         alarmVibrate = editAlarmModel.alarmVibrating
@@ -111,13 +112,21 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
                     this.alarmVibrating = alarmVibrate
                     this.alarmRingtoneUri = alarmRingtoneUri.toString()
                     this.alarmTitle = title
+                    this.alarmHourMinuteFormat = hourMinuteFormat
                 }
                 viewModel.updateAlarm(editAlarmModel!!)
                     .invokeOnCompletion {
                         findNavController().popBackStack()
                     }
             } else {
-                viewModel.addAlarm(title, timeInMillis, dayList, alarmVibrate, alarmRingtoneUri)
+                viewModel.addAlarm(
+                    title,
+                    timeInMillis,
+                    dayList,
+                    alarmVibrate,
+                    alarmRingtoneUri,
+                    hourMinuteFormat
+                )
                     .invokeOnCompletion {
                         findNavController().popBackStack()
                     }
@@ -143,11 +152,14 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
         binding.timePicker.setIs24HourView(true)
 
         if (editState) {
-           val date = Date(editAlarmModel!!.alarmTime)
+            val date = Date(editAlarmModel!!.alarmTime)
             selected.time = date
             timeInMillis = editAlarmModel!!.alarmTime
-            binding.timePicker.hour = selected[Calendar.HOUR_OF_DAY]
-            binding.timePicker.minute = selected[Calendar.MINUTE]
+
+            val splitHourMinute =
+                ConverterHoursMinutesFormat.splitHourAndMinute(editAlarmModel!!.alarmHourMinuteFormat!!)
+            binding.timePicker.hour = splitHourMinute[0]
+            binding.timePicker.minute = splitHourMinute[1]
         } else {
             timeInMillis = selected.timeInMillis
         }
@@ -156,6 +168,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
             selected[Calendar.MINUTE] = p2
             selected[Calendar.SECOND] = 0
             timeInMillis = selected.timeInMillis
+            hourMinuteFormat = ConverterHoursMinutesFormat.convertToHourAndMinuteFormat(p1, p2)
         }
     }
 
