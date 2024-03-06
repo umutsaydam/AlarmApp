@@ -36,14 +36,21 @@ class TimesUpActivity : AppCompatActivity(), IVibrator, IRingtonePlayer {
             alarmModel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 it.getParcelable("alarmModel", AlarmModel::class.java)!!
             } else {
-                it.getParcelable("alarmModel")!!
+                @Suppress("DEPRECATION")
+                it.getParcelable<AlarmModel>("alarmModel")!! as AlarmModel
             }
         }
+        if (alarmModel.alarmRingtoneUri == null || alarmModel.alarmRingtoneUri == ""){
+            alarmModel.alarmRingtoneUri = intent.getStringExtra("testRingtone")
+            Log.d("R/T", "ringtone is empty")
+        }
+
         alarmVibrating = alarmModel.alarmVibrating
 
         alarmRingtoneUri = alarmModel.alarmRingtoneUri
         ringtonePlayer = RingtonePlayer(this, alarmRingtoneUri!!)
-        playRingtone()
+        Log.d("R/T", "${alarmRingtoneUri} 46")
+        //playRingtone()
 
         if (alarmVibrating) {
             vibrator = Vibrator(this)

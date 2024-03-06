@@ -9,7 +9,7 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 
-class RingtoneSelector(private val fragment: Fragment) : IRingtoneSelector {
+class RingtoneSelector(fragment: Fragment) : IRingtoneSelector {
     private var currRingtoneUri: String? = null
 
     private val resultLauncher =
@@ -20,7 +20,7 @@ class RingtoneSelector(private val fragment: Fragment) : IRingtoneSelector {
                     Log.d("R/T", "Null ringtone")
                 } else {
                     currRingtoneUri = uri.toString()
-                    Log.d("R/T", uri.toString())
+                    Log.d("R/T", "${currRingtoneUri} 23")
                 }
             }
         }
@@ -38,6 +38,7 @@ class RingtoneSelector(private val fragment: Fragment) : IRingtoneSelector {
         if (alarmUri == null) {
             alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         }
+        Log.d("R/T", "${alarmUri} 41")
         currRingtoneUri = alarmUri.toString()
     }
 
@@ -45,6 +46,7 @@ class RingtoneSelector(private val fragment: Fragment) : IRingtoneSelector {
         if (currRingtoneUri == null) {
             selectDefaultRingtone()
         }
+        Log.d("R/T", "${currRingtoneUri} 49")
         return currRingtoneUri!!
     }
 }
