@@ -1,7 +1,6 @@
 package com.umutsaydam.alarmapp.db
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -22,4 +21,7 @@ interface AlarmDao {
 
     @Delete
     suspend fun deleteAlarm(alarmModel: AlarmModel)
+
+    @Query("SELECT COUNT(alarmId) FROM alarms WHERE alarmEnabled = 1")
+    suspend fun countOfEnabledAlarms(): Int
 }

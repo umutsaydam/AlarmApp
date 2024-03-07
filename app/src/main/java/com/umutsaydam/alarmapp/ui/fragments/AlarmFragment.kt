@@ -26,7 +26,6 @@ class AlarmFragment : Fragment(), SetCheckedListener, SetClickListener {
     private lateinit var viewModel: AlarmViewModel
     private lateinit var alarmAdapter: AlarmAdapter
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -55,6 +54,7 @@ class AlarmFragment : Fragment(), SetCheckedListener, SetClickListener {
 
         }
         dialog.setPositiveButton("Yes") { _, _ ->
+            AlarmViewModel.decreaseCountOfEnabledAlarms()
             viewModel.deleteAlarm(alarmModel)
         }
         dialog.setCancelable(true)

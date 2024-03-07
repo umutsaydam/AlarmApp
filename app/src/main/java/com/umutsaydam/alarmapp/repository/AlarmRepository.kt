@@ -12,4 +12,6 @@ class AlarmRepository(val db: AlarmDatabase) {
     suspend fun getSingleAlarm(alarmId: Int) = db.getAlarmDao().getSingleAlarm(alarmId)
 
     suspend fun deleteAlarm(alarmModel: AlarmModel) = db.getAlarmDao().deleteAlarm(alarmModel)
+
+    suspend fun countOfEnabledAlarm() = db.getAlarmDao().countOfEnabledAlarms()
 }

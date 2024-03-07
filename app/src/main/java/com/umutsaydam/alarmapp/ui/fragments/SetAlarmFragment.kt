@@ -117,9 +117,11 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
                 }
                 viewModel.updateAlarm(editAlarmModel!!)
                     .invokeOnCompletion {
+                        viewModel.updateCountOfEnabledAlarms()
                         findNavController().popBackStack()
                     }
             } else {
+                AlarmViewModel.increaseCountOfEnabledAlarms()
                 viewModel.addAlarm(title, timeInMillis, dayList, alarmVibrate, alarmRingtoneUri)
                     .invokeOnCompletion {
                         findNavController().popBackStack()
