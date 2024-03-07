@@ -62,6 +62,7 @@ class TimesUpActivity : AppCompatActivity(), IVibrator, IRingtonePlayer {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initUI() {
+        binding.tvAlarmTime.text = alarmModel.alarmHourMinuteFormat
         binding.tvAlarmTitle.text = alarmModel.alarmTitle
 
 

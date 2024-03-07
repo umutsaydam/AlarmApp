@@ -10,7 +10,7 @@ import com.umutsaydam.alarmapp.utils.Converters
 
 @Database(
     entities = [AlarmModel::class],
-    version =7,
+    version =8,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
