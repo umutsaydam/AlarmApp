@@ -4,6 +4,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,6 +66,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
             }
             if (editAlarmModel != null) {
                 editState = EDIT_MODE_ON
+                Log.d("R/T", "${editAlarmModel!!.alarmRingtoneUri} 68")
                 initEditAlarmUI(editAlarmModel!!)
                 dayList.addAll(editAlarmModel!!.alarmRepeat)
             }
@@ -104,6 +106,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
             val title = binding.tvClockTitle.text.toString()
 
             alarmRingtoneUri = ringtoneSelector.currentRingtone()
+            Log.d("R/T", "${alarmRingtoneUri} 108")
 
             if (editState) {
                 editAlarmModel!!.apply {

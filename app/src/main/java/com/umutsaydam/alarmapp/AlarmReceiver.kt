@@ -48,6 +48,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 val bundle = Bundle()
                 bundle.putParcelable("alarmModel", alarmModel)
                 myIntent.putExtra("alarmModelBundle", bundle)
+                myIntent.putExtra("testRingtone", alarmModel.alarmRingtoneUri)
 
                 myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(myIntent)
