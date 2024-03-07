@@ -43,6 +43,11 @@ class AlarmFragment : Fragment(), SetCheckedListener, SetClickListener {
 
     override fun setOnCheckedListener(alarmModel: AlarmModel) {
         alarmModel.alarmEnabled = !alarmModel.alarmEnabled
+        if (alarmModel.alarmEnabled)
+            AlarmViewModel.increaseCountOfEnabledAlarms()
+        else
+            AlarmViewModel.decreaseCountOfEnabledAlarms()
+        viewModel.checkAlarmNotificationState()
         viewModel.updateAlarm(alarmModel)
     }
 

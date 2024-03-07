@@ -123,6 +123,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
                         findNavController().popBackStack()
                     }
             } else {
+                AlarmViewModel.increaseCountOfEnabledAlarms()
                 viewModel.addAlarm(
                     title,
                     timeInMillis,
@@ -131,9 +132,8 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
                     alarmRingtoneUri,
                     hourMinuteFormat
                 ).invokeOnCompletion {
-                        AlarmViewModel.increaseCountOfEnabledAlarms()
-                        findNavController().popBackStack()
-                    }
+                    findNavController().popBackStack()
+                }
             }
         }
 

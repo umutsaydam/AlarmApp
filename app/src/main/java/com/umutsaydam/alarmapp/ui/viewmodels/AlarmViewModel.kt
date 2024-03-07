@@ -23,12 +23,15 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
 
         fun increaseCountOfEnabledAlarms() {
             countOfEnabledAlarms++
+            Log.d("R/T", "increased $countOfEnabledAlarms")
         }
 
-        fun decreaseCountOfEnabledAlarms(){
+        fun decreaseCountOfEnabledAlarms() {
             countOfEnabledAlarms--
+            Log.d("R/T", "decreased $countOfEnabledAlarms")
         }
     }
+
     init {
         alarmNotification = AlarmNotification(context.applicationContext)
         updateCountOfEnabledAlarms()
@@ -59,10 +62,7 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
                 alarmHourMinuteFormat
             )
             Log.d("R/T", "$countOfEnabledAlarms 51")
-            if (countOfEnabledAlarms == 1) {
-                startForegroundService()
-                Log.d("R/T", "service was started")
-            }
+            checkAlarmNotificationState()
             val rescheduledTime = alarmSchedule.alarmReschedule(alarm)
             alarm.alarmTime = rescheduledTime
             val alarmId = alarmRepository.addAlarm(alarm).toInt()
@@ -86,10 +86,7 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
 
     fun deleteAlarm(alarmModel: AlarmModel) = viewModelScope.launch {
         Log.d("R/T", "$countOfEnabledAlarms")
-        if (countOfEnabledAlarms <= 0) {
-            stopService()
-            Log.d("R/T", "service was stopped")
-        }
+        checkAlarmNotificationState()
         alarmRepository.deleteAlarm(alarmModel)
         alarmManager.deleteAlarm(alarmModel)
     }
@@ -102,6 +99,13 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         alarmRepeat.sort()
         if (alarmRepeat.isEmpty()) alarmRepeat.addAll((1..7).map { it })
         return alarmRepeat
+    }
+
+    fun checkAlarmNotificationState() {
+        when (countOfEnabledAlarms) {
+            0 -> stopService()
+            1 -> startForegroundService()
+        }
     }
 
     fun updateCountOfEnabledAlarms() = viewModelScope.launch {
