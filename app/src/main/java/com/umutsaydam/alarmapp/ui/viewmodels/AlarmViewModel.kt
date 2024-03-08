@@ -13,27 +13,13 @@ import com.umutsaydam.alarmapp.repository.AlarmRepository
 import kotlinx.coroutines.launch
 
 class AlarmViewModel(context: Context, private val alarmRepository: AlarmRepository) :
-    ViewModel(), IAlarmNotification {
+    ViewModel() {
     private val alarmManager: Alarms = Alarms(context)
     private val alarmSchedule: AlarmSchedule = AlarmSchedule()
     private var alarmNotification: IAlarmNotification
 
-    companion object {
-        private var countOfEnabledAlarms = 0
-
-        fun increaseCountOfEnabledAlarms() {
-            countOfEnabledAlarms++
-            Log.d("R/T", "increased $countOfEnabledAlarms")
-        }
-
-        fun decreaseCountOfEnabledAlarms() {
-            countOfEnabledAlarms--
-            Log.d("R/T", "decreased $countOfEnabledAlarms")
-        }
-    }
-
     init {
-        alarmNotification = AlarmNotification(context.applicationContext)
+        alarmNotification = AlarmNotification(context)
         updateCountOfEnabledAlarms()
     }
 
@@ -61,7 +47,7 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
                 alarmRingtoneUri,
                 alarmHourMinuteFormat
             )
-            Log.d("R/T", "$countOfEnabledAlarms 51")
+            AlarmNotification.increaseCountOfEnabledAlarms()
             checkAlarmNotificationState()
             val rescheduledTime = alarmSchedule.alarmReschedule(alarm)
             alarm.alarmTime = rescheduledTime
@@ -78,6 +64,7 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         alarmRepository.addAlarm(alarmModel)
         alarmManager.updateAlarm(alarmModel)
         updateCountOfEnabledAlarms()
+        checkAlarmNotificationState()
     }
 
     fun getSingleAlarm(alarmId: Int) = viewModelScope.launch {
@@ -85,7 +72,7 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
     }
 
     fun deleteAlarm(alarmModel: AlarmModel) = viewModelScope.launch {
-        Log.d("R/T", "$countOfEnabledAlarms")
+        AlarmNotification.decreaseCountOfEnabledAlarms()
         checkAlarmNotificationState()
         alarmRepository.deleteAlarm(alarmModel)
         alarmManager.deleteAlarm(alarmModel)
@@ -101,25 +88,11 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         return alarmRepeat
     }
 
-    fun checkAlarmNotificationState() {
-        when (countOfEnabledAlarms) {
-            0 -> stopService()
-            1 -> startForegroundService()
-        }
-    }
-
     fun updateCountOfEnabledAlarms() = viewModelScope.launch {
-        countOfEnabledAlarms = alarmRepository.countOfEnabledAlarm()
-        Log.d("R/T", "$countOfEnabledAlarms updated")
+        AlarmNotification.updateCountOfEnabledAlarms(alarmRepository.countOfEnabledAlarm())
     }
 
-    override fun startForegroundService() {
-        alarmNotification.startForegroundService()
+    private fun checkAlarmNotificationState(){
+        alarmNotification.checkAlarmNotificationState()
     }
-
-    override fun stopService() {
-        alarmNotification.stopService()
-    }
-
-
 }

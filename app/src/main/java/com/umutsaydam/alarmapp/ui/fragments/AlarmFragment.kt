@@ -13,6 +13,7 @@ import com.umutsaydam.alarmapp.R
 import com.umutsaydam.alarmapp.adapters.AlarmAdapter
 import com.umutsaydam.alarmapp.databinding.FragmentAlarmBinding
 import com.umutsaydam.alarmapp.db.AlarmDatabase
+import com.umutsaydam.alarmapp.helpers.AlarmNotification
 import com.umutsaydam.alarmapp.models.AlarmModel
 import com.umutsaydam.alarmapp.repository.AlarmRepository
 import com.umutsaydam.alarmapp.ui.viewmodels.AlarmViewModel
@@ -44,10 +45,9 @@ class AlarmFragment : Fragment(), SetCheckedListener, SetClickListener {
     override fun setOnCheckedListener(alarmModel: AlarmModel) {
         alarmModel.alarmEnabled = !alarmModel.alarmEnabled
         if (alarmModel.alarmEnabled)
-            AlarmViewModel.increaseCountOfEnabledAlarms()
+            AlarmNotification.increaseCountOfEnabledAlarms()
         else
-            AlarmViewModel.decreaseCountOfEnabledAlarms()
-        viewModel.checkAlarmNotificationState()
+            AlarmNotification.decreaseCountOfEnabledAlarms()
         viewModel.updateAlarm(alarmModel)
     }
 
@@ -59,7 +59,6 @@ class AlarmFragment : Fragment(), SetCheckedListener, SetClickListener {
 
         }
         dialog.setPositiveButton("Yes") { _, _ ->
-            AlarmViewModel.decreaseCountOfEnabledAlarms()
             viewModel.deleteAlarm(alarmModel)
         }
         dialog.setCancelable(true)

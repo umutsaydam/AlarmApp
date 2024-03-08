@@ -6,9 +6,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.umutsaydam.alarmapp.db.AlarmDatabase
+import com.umutsaydam.alarmapp.helpers.AlarmNotification
 import com.umutsaydam.alarmapp.helpers.AlarmSchedule
 import com.umutsaydam.alarmapp.helpers.Alarms
 import com.umutsaydam.alarmapp.helpers.IAlarmManager
+import com.umutsaydam.alarmapp.helpers.IAlarmNotification
 import com.umutsaydam.alarmapp.repository.AlarmRepository
 import com.umutsaydam.alarmapp.ui.TimesUpActivity
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +21,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private lateinit var alarmManager: IAlarmManager
     private lateinit var alarmSchedule: AlarmSchedule
+    private lateinit var alarmNotification: IAlarmNotification
 
     override fun onReceive(context: Context, intent: Intent) {
         if (!::alarmManager.isInitialized) {
@@ -26,6 +29,7 @@ class AlarmReceiver : BroadcastReceiver() {
             alarmManager = alarms
             val schedule = AlarmSchedule()
             alarmSchedule = schedule
+            alarmNotification = AlarmNotification(context)
         }
 
         val alarmId = intent.getIntExtra("alarmId", -1)
@@ -38,6 +42,8 @@ class AlarmReceiver : BroadcastReceiver() {
                         alarmSchedule.alarmReschedule(alarmModel)
                     alarmRepository.addAlarm(alarmModel)
                 } else {
+                    AlarmNotification.decreaseCountOfEnabledAlarms()
+                    alarmNotification.checkAlarmNotificationState()
                     alarmManager.deleteAlarm(alarmModel)
                     alarmRepository.deleteAlarm(alarmModel)
                 }

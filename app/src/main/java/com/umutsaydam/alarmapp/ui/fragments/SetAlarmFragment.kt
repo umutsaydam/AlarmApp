@@ -123,7 +123,6 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
                         findNavController().popBackStack()
                     }
             } else {
-                AlarmViewModel.increaseCountOfEnabledAlarms()
                 viewModel.addAlarm(
                     title,
                     timeInMillis,
