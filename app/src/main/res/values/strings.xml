@@ -21,4 +21,5 @@
     <string name="alarm_off">Alarm off</string>
     <string name="arrows">Arrows</string>
     <string name="start">Start</string>
+    <string name="resume">Resume</string>
 </resources>
