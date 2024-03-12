@@ -11,6 +11,7 @@ import com.umutsaydam.alarmapp.helpers.IAlarmNotification
 import com.umutsaydam.alarmapp.models.AlarmModel
 import com.umutsaydam.alarmapp.repository.AlarmRepository
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class AlarmViewModel(context: Context, private val alarmRepository: AlarmRepository) :
     ViewModel() {
@@ -79,7 +80,11 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
     }
 
     private fun checkAlarmTitle(alarmTitle: String?): String {
-        return alarmTitle?.trim() ?: "None"
+        var alarmTitleEdited = alarmTitle?.trim()
+        if (alarmTitleEdited == null || alarmTitleEdited == "") {
+            alarmTitleEdited = "None"
+        }
+        return alarmTitleEdited.replaceFirstChar { it.titlecase(Locale.getDefault()) }
     }
 
     private fun checkAlarmRepeat(alarmRepeat: ArrayList<Int>): List<Int> {
@@ -92,7 +97,7 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         AlarmNotification.updateCountOfEnabledAlarms(alarmRepository.countOfEnabledAlarm())
     }
 
-    private fun checkAlarmNotificationState(){
+    private fun checkAlarmNotificationState() {
         alarmNotification.checkAlarmNotificationState()
     }
 }
