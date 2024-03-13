@@ -47,12 +47,6 @@ class CustomCountdownTimer(
         isRunning = true
     }
 
-    fun restartTimer() {
-        timer.cancel()
-        timer = InternalTimer(this, millisUntilFinished, countDownInterval)
-        startTimer()
-    }
-
     fun destroyTimer() {
         timer.cancel()
     }

@@ -7,8 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
-import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
 import com.umutsaydam.alarmapp.databinding.FragmentTimerBinding
 import com.umutsaydam.alarmapp.helpers.CustomCountdownTimer
@@ -19,17 +17,48 @@ class TimerFragment : Fragment() {
     private var _binding: FragmentTimerBinding? = null
     private val binding get() = _binding!!
     private lateinit var customCountdownTimer: CustomCountdownTimer
-
-    private val countdownTime = 60 // 60 second, 1 min
-    private val clockTime = (countdownTime * 1000).toLong()
-    private val progressTime = (clockTime / 1000).toFloat()
-
+    private var currHour = 0
+    private var currMinute = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentTimerBinding.inflate(inflater, container, false)
 
+        binding.timePickerTimer.setIs24HourView(true)
+        binding.timePickerTimer.hour = 0
+        binding.timePickerTimer.minute = 0
+        binding.timePickerTimer.setOnTimeChangedListener { _, hour, minute ->
+            currHour = hour
+            currMinute = minute
+
+            binding.btnStart.isEnabled = hour > 0 || minute > 0
+
+        }
+        binding.btnStart.setOnClickListener {
+            binding.timePickerTimer.visibility = View.GONE
+            binding.tvTimer.visibility = View.VISIBLE
+            initCustomCountdownTimer()
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    customCountdownTimer.destroyTimer()
+                    findNavController().navigateUp()
+                }
+            })
+
+        return binding.root
+    }
+
+    private fun initCustomCountdownTimer() {
+        binding.btnStart.visibility = View.GONE
+        binding.llTimerController.visibility = View.VISIBLE
+
+        val countdownTime = (currHour * 60 * 60) + (currMinute * 60)
+        val clockTime = (countdownTime * 1000).toLong()
+        val progressTime = (clockTime / 1000).toFloat()
         var secondsLeft = 0
         customCountdownTimer = CustomCountdownTimer(clockTime, 1000)
         customCountdownTimer.onTick = { millisUntilFinished ->
@@ -51,31 +80,23 @@ class TimerFragment : Fragment() {
 
         binding.btnCancel.setOnClickListener {
             customCountdownTimer.destroyTimer()
+            binding.timePickerTimer.visibility = View.VISIBLE
+            binding.tvTimer.visibility = View.GONE
+            binding.llTimerController.visibility = View.GONE
+            binding.btnStart.visibility = View.VISIBLE
         }
 
-        binding.btnStart.setOnClickListener {
-            customCountdownTimer.startTimer()
-        }
-
-        binding.btnResume.setOnClickListener {
+        binding.btnPause.setOnClickListener {
+            binding.btnPause.visibility = View.GONE
+            binding.btnResume.visibility = View.VISIBLE
             customCountdownTimer.pauseTimer()
         }
 
-        binding.btnCancel.setOnClickListener {
-            binding.pbTimer.progress = progressTime.toInt()
-            customCountdownTimer.restartTimer()
+        binding.btnResume.setOnClickListener {
+            binding.btnPause.visibility = View.VISIBLE
+            binding.btnResume.visibility = View.GONE
+            customCountdownTimer.resumeTimer()
         }
-
-        requireActivity().onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    customCountdownTimer.destroyTimer()
-                    findNavController().navigateUp()
-                }
-            })
-
-        return binding.root
     }
 
     private fun timerFormat(secondsLeft: Int, tvTimer: TextView) {
@@ -86,14 +107,12 @@ class TimerFragment : Fragment() {
         val min = (secondsLeft % 3600) / 60
         val seconds = secondsLeft % 60
 
-        val timeFormat1 = decimalFormat.format(secondsLeft)
-        val timeFormat2 = decimalFormat.format(min) + ":" + decimalFormat.format(seconds)
         val timerFormat3 =
             decimalFormat.format(hour) + ":" + decimalFormat.format(min) + ":" + decimalFormat.format(
                 seconds
             )
 
-        binding.tvTimer.text = timeFormat1 + "\n" + timeFormat2 + "\n" + timerFormat3
+        binding.tvTimer.text = timerFormat3
     }
 
     override fun onDestroy() {
