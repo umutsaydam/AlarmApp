@@ -5,12 +5,12 @@ import android.os.CountDownTimer
 class CustomCountdownTimer(
     private val millisInFuture: Long,
     private val countDownInterval: Long,
-) {
+): ICustomCountdownTimer  {
     private val millisUntilFinished = millisInFuture
     private var timer = InternalTimer(this, millisInFuture, countDownInterval)
     private var isRunning = false
-    var onTick: ((millisUntilFinished: Long) -> Unit)? = null
-    var onFinish: (() -> Unit)? = null
+    override var onTick: ((millisUntilFinished: Long) -> Unit)? = null
+    override var onFinish: (() -> Unit)? = null
 
 
     private class InternalTimer(
@@ -30,24 +30,24 @@ class CustomCountdownTimer(
         }
     }
 
-    fun pauseTimer() {
+   override fun pauseTimer() {
         timer.cancel()
         isRunning = false
     }
 
-    fun resumeTimer() {
+    override fun resumeTimer() {
         if (!isRunning && timer.millisUntilFinished > 0) {
             timer = InternalTimer(this, timer.millisUntilFinished, countDownInterval)
             startTimer()
         }
     }
 
-    fun startTimer() {
+    override fun startTimer() {
         timer.start()
         isRunning = true
     }
 
-    fun destroyTimer() {
+    override fun destroyTimer() {
         timer.cancel()
     }
 }
