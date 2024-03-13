@@ -8,7 +8,7 @@ class CustomCountdownTimer(
 ) {
     private val millisUntilFinished = millisInFuture
     private var timer = InternalTimer(this, millisInFuture, countDownInterval)
-    private val isRunning = false
+    private var isRunning = false
     var onTick: ((millisUntilFinished: Long) -> Unit)? = null
     var onFinish: (() -> Unit)? = null
 
@@ -31,23 +31,30 @@ class CustomCountdownTimer(
     }
 
     fun pauseTimer() {
-
+        timer.cancel()
+        isRunning = false
     }
 
     fun resumeTimer() {
-
+        if (!isRunning && timer.millisUntilFinished > 0) {
+            timer = InternalTimer(this, timer.millisUntilFinished, countDownInterval)
+            startTimer()
+        }
     }
 
     fun startTimer() {
-
+        timer.start()
+        isRunning = true
     }
 
     fun restartTimer() {
-
+        timer.cancel()
+        timer = InternalTimer(this, millisUntilFinished, countDownInterval)
+        startTimer()
     }
 
     fun destroyTimer() {
-
+        timer.cancel()
     }
 }
 

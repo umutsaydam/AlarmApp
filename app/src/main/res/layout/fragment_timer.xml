@@ -7,21 +7,21 @@
     android:background="@color/main_bg"
     tools:context=".ui.fragments.TimerFragment">
 
-
     <ProgressBar
         android:id="@+id/pbTimer"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:progress="50"
-        android:progressBackgroundTint="@color/picker_bg"
-        android:progressTint="@color/white"
-        android:secondaryProgressTint="@color/header"
+        android:indeterminateOnly="false"
+        android:progress="0"
+        android:progressDrawable="@drawable/circular_progress_bar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/tvTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:13:15"
