@@ -45,7 +45,7 @@ class AlarmNotification(private val context: Context) : IAlarmNotification {
         }
     }
 
-    override fun startForegroundService() {
+    override fun startForegroundService() { 
         val serviceIntent = Intent(context, AlarmNotificationService::class.java)
         ContextCompat.startForegroundService(context, serviceIntent)
         Log.d("R/T", "service was started function")
