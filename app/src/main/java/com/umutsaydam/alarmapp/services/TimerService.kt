@@ -42,7 +42,7 @@ class TimerService : Service() {
 
                     val intent = Intent("TIMER_TICK")
                     intent.putExtra("timeLeftFormatted", formatTime(secondsLeft))
-                    intent.putExtra("timeLeft", formatTime(secondsLeft))
+                    intent.putExtra("timeLeft", secondsLeft)
                     sendBroadcast(intent)
 
                     notificationBuilder?.let {

@@ -39,34 +39,39 @@ class TimerFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == "TIMER_TICK") {
                 val timeLeftFormatted = intent.getStringExtra("timeLeftFormatted")
-                val timeLeft = intent.getIntExtra("timeLeftFormatted", 0)
+                val timeLeft = intent.getIntExtra("timeLeft", 0)
                 Log.d("R/T", "Time left: $timeLeftFormatted seconds *************************")
                 binding.tvTimer.text = timeLeftFormatted
                 updateProgressBar(timeLeft)
 
-                if (!isTimerEnable) {
-                    binding.timePickerTimer.visibility = View.GONE
-                    binding.llTimerController.visibility = View.VISIBLE
-                    binding.tvTimer.visibility = View.VISIBLE
-                    binding.btnStart.visibility = View.GONE
+                if (!isTimerEnable){
+                    isTimerEnable = true
+                    changeTimerController(true)
                 }
-                isTimerEnable = true
-
                 if (timeLeft == 0) {
-                    binding.timePickerTimer.visibility = View.VISIBLE
-                    binding.llTimerController.visibility = View.GONE
-                    binding.tvTimer.visibility = View.GONE
-                    binding.btnStart.visibility = View.VISIBLE
+                    changeTimerController(false)
                     isTimerEnable = false
                 }
             }
         }
     }
 
+    private fun changeTimerController(isTiming: Boolean) {
+        if (isTiming) {
+            binding.btnStart.visibility = View.GONE
+            binding.timePickerTimer.visibility = View.GONE
+            binding.llTimerController.visibility = View.VISIBLE
+            binding.tvTimer.visibility = View.VISIBLE
+        } else {
+            binding.timePickerTimer.visibility = View.VISIBLE
+            binding.llTimerController.visibility = View.GONE
+            binding.tvTimer.visibility = View.GONE
+            binding.btnStart.visibility = View.VISIBLE
+        }
+    }
+
     private fun initTimeControllerUI() {
         binding.btnStart.setOnClickListener {
-            binding.timePickerTimer.visibility = View.GONE
-
             val serviceIntent = Intent(requireContext(), TimerService::class.java)
             serviceIntent.putExtra("hour", currHour)
             serviceIntent.putExtra("minute", currMinute)
@@ -76,7 +81,8 @@ class TimerFragment : Fragment() {
                 requireContext().startService(serviceIntent)
             }
             initCustomCountdownTimer()
-
+            changeTimerController(true)
+            isTimerEnable = true
         }
 
         binding.btnCancel.setOnClickListener {
