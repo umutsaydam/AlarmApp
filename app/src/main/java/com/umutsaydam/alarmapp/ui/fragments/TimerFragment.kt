@@ -1,11 +1,16 @@
 package com.umutsaydam.alarmapp.ui.fragments
 
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.ServiceConnection
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,6 +19,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import com.umutsaydam.alarmapp.databinding.FragmentTimerBinding
+import com.umutsaydam.alarmapp.helpers.ITimerManager
 import com.umutsaydam.alarmapp.services.TimerService
 
 class TimerFragment : Fragment() {
@@ -22,12 +28,40 @@ class TimerFragment : Fragment() {
     private var currHour = 0
     private var currMinute = 0
     private var isTimerEnable = false
+    private var timerService: ITimerManager? = null
+    private var isBound = false
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var editor: Editor
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName?, service: IBinder?) {
+            val binder = service as TimerService.TimerBinder
+            timerService = binder.getService()
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(className: ComponentName?) {
+            timerService = null
+            isBound = false
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentTimerBinding.inflate(inflater, container, false)
+
+        context?.let {
+            sharedPreferences = it.getSharedPreferences("TimerFeature", Context.MODE_PRIVATE)
+            editor = sharedPreferences.edit()
+        }
+        if (sharedPreferences.getBoolean("isTimerEnabled", false)) {
+            changeTimerController(true)
+            binding.tvTimer.text = TimerService.remainTimeFormatted
+            togglePauseResumeButtons(View.GONE, View.VISIBLE)
+        }
+        timerService = TimerService()
 
         initTimePickerUI()
         initTimeControllerUI()
@@ -44,13 +78,15 @@ class TimerFragment : Fragment() {
                 binding.tvTimer.text = timeLeftFormatted
                 updateProgressBar(timeLeft)
 
-                if (!isTimerEnable){
+                if (!isTimerEnable) {
                     isTimerEnable = true
                     changeTimerController(true)
                 }
                 if (timeLeft == 0) {
                     changeTimerController(false)
                     isTimerEnable = false
+                    editor.putBoolean("isTimerEnabled", false)
+                    editor.apply()
                 }
             }
         }
@@ -82,21 +118,25 @@ class TimerFragment : Fragment() {
             }
             initCustomCountdownTimer()
             changeTimerController(true)
+            editor.putBoolean("isTimerEnabled", true)
+            editor.apply()
             isTimerEnable = true
         }
 
         binding.btnCancel.setOnClickListener {
-            binding.timePickerTimer.visibility = View.VISIBLE
-            binding.tvTimer.visibility = View.GONE
-            binding.llTimerController.visibility = View.GONE
-            binding.btnStart.visibility = View.VISIBLE
+            changeTimerController(false)
+            timerService!!.cancelTimer()
+            editor.putBoolean("isTimerEnabled", false)
+            editor.apply()
         }
 
         binding.btnPause.setOnClickListener {
+            timerService!!.pauseTimer()
             togglePauseResumeButtons(visibilityPause = View.GONE, visibilityResume = View.VISIBLE)
         }
 
         binding.btnResume.setOnClickListener {
+            timerService!!.resumeTimer()
             togglePauseResumeButtons(visibilityPause = View.VISIBLE, visibilityResume = View.GONE)
         }
     }
@@ -146,6 +186,9 @@ class TimerFragment : Fragment() {
         // BroadcastReceiver'ı kaydedin
         requireContext().registerReceiver(broadcastReceiver, IntentFilter("TIMER_TICK"))
         Log.d("R/T", "Broadcast basladi")
+        Intent(requireContext(), TimerService::class.java).also { intent ->
+            requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
     }
 
     override fun onStop() {
@@ -153,6 +196,9 @@ class TimerFragment : Fragment() {
         // BroadcastReceiver'ı kaldırın
         requireContext().unregisterReceiver(broadcastReceiver)
         Log.d("R/T", "Broadcast bitti")
+        Intent(requireContext(), TimerService::class.java).also { intent ->
+            requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
     }
 
     override fun onDestroy() {
