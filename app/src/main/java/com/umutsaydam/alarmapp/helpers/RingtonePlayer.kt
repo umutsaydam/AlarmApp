@@ -4,7 +4,7 @@ import android.content.Context
 import android.media.RingtoneManager
 import android.net.Uri
 
-class RingtonePlayer(private val context: Context, private val ringtoneUri: String) :
+class RingtonePlayer(context: Context, ringtoneUri: String) :
     IRingtonePlayer {
     private val ringtone = RingtoneManager.getRingtone(context, Uri.parse(ringtoneUri))
 

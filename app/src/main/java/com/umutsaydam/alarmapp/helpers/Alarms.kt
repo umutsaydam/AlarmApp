@@ -4,8 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import com.umutsaydam.alarmapp.AlarmReceiver
+import com.umutsaydam.alarmapp.receivers.AlarmReceiver
 import com.umutsaydam.alarmapp.models.AlarmModel
 
 class Alarms(private val context: Context) :
@@ -35,10 +34,8 @@ class Alarms(private val context: Context) :
             PendingIntent.FLAG_UPDATE_CURRENT
         )
         if (alarmModel.alarmEnabled) {
-            Log.d("R/T", alarmModel.alarmId.toString() + " etkin")
             alarmManager[AlarmManager.RTC_WAKEUP, alarmModel.alarmTime] = pendingIntent
         } else {
-            Log.d("R/T", alarmModel.alarmId.toString() + " devre disi")
             alarmManager[AlarmManager.RTC_WAKEUP, alarmModel.alarmTime] = pendingIntent
             alarmManager.cancel(pendingIntent)
         }

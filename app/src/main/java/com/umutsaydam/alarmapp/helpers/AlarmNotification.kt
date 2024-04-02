@@ -14,17 +14,14 @@ class AlarmNotification(private val context: Context) : IAlarmNotification {
 
         fun increaseCountOfEnabledAlarms() {
             countOfEnabledAlarms++
-            Log.d("R/T", "increased $countOfEnabledAlarms")
         }
 
         fun decreaseCountOfEnabledAlarms() {
             countOfEnabledAlarms--
-            Log.d("R/T", "decreased $countOfEnabledAlarms")
         }
 
         fun updateCountOfEnabledAlarms(count: Int) {
             countOfEnabledAlarms = count
-            Log.d("R/T", "$countOfEnabledAlarms updated")
         }
     }
 

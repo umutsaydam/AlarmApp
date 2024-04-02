@@ -1,7 +1,6 @@
 package com.umutsaydam.alarmapp.ui.viewmodels
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.umutsaydam.alarmapp.helpers.AlarmNotification
@@ -37,7 +36,6 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         viewModelScope.launch {
             val organizedAlarmRepeat = checkAlarmRepeat(alarmRepeat) as ArrayList<Int>
             val checkedAlarmTitle = checkAlarmTitle(alarmTitle)
-            Log.d("R/T", "$alarmRepeat.toString() viewmodel")
             val alarm = AlarmModel(
                 0,
                 checkedAlarmTitle,

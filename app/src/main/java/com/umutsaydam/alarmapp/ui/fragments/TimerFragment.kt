@@ -11,7 +11,6 @@ import android.content.SharedPreferences.Editor
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +32,37 @@ class TimerFragment : Fragment() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: Editor
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        _binding = FragmentTimerBinding.inflate(inflater, container, false)
+
+        initSharedPreferences()
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (sharedPreferences.getBoolean("isTimerEnabled", false)) {
+            changeTimerController(true)
+            binding.tvTimer.text = TimerService.remainTimeFormatted
+            togglePauseResumeButtons(View.GONE, View.VISIBLE)
+        }
+        timerService = TimerService()
+
+        initTimePickerUI()
+        initTimeControllerUI()
+        initOnBackPressed()
+    }
+
+    private fun initSharedPreferences() {
+        context?.let {
+            sharedPreferences = it.getSharedPreferences("TimerFeature", Context.MODE_PRIVATE)
+            editor = sharedPreferences.edit()
+        }
+    }
+
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, service: IBinder?) {
             val binder = service as TimerService.TimerBinder
@@ -46,35 +76,12 @@ class TimerFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        _binding = FragmentTimerBinding.inflate(inflater, container, false)
-
-        context?.let {
-            sharedPreferences = it.getSharedPreferences("TimerFeature", Context.MODE_PRIVATE)
-            editor = sharedPreferences.edit()
-        }
-        if (sharedPreferences.getBoolean("isTimerEnabled", false)) {
-            changeTimerController(true)
-            binding.tvTimer.text = TimerService.remainTimeFormatted
-            togglePauseResumeButtons(View.GONE, View.VISIBLE)
-        }
-        timerService = TimerService()
-
-        initTimePickerUI()
-        initTimeControllerUI()
-        initOnBackPressed()
-        return binding.root
-    }
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == "TIMER_TICK") {
                 val timeLeftFormatted = intent.getStringExtra("timeLeftFormatted")
                 val timeLeft = intent.getIntExtra("timeLeft", 0)
-                Log.d("R/T", "Time left: $timeLeftFormatted seconds *************************")
                 binding.tvTimer.text = timeLeftFormatted
                 updateProgressBar(timeLeft)
 
@@ -183,9 +190,7 @@ class TimerFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        // BroadcastReceiver'ı kaydedin
         requireContext().registerReceiver(broadcastReceiver, IntentFilter("TIMER_TICK"))
-        Log.d("R/T", "Broadcast basladi")
         Intent(requireContext(), TimerService::class.java).also { intent ->
             requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
@@ -193,18 +198,15 @@ class TimerFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        // BroadcastReceiver'ı kaldırın
         requireContext().unregisterReceiver(broadcastReceiver)
-        Log.d("R/T", "Broadcast bitti")
-        Intent(requireContext(), TimerService::class.java).also { intent ->
-            requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        Intent(requireContext(), TimerService::class.java).also { _ ->
+            requireContext().unbindService(connection)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        Log.d("R/D", "onDestroy")
     }
 
 }

@@ -7,9 +7,9 @@ import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.umutsaydam.alarmapp.R
-import com.umutsaydam.alarmapp.helpers.ITimerManager
 
 class AlarmNotificationService : Service() {
 
@@ -29,16 +29,20 @@ class AlarmNotificationService : Service() {
             .setPriority(NotificationCompat.PRIORITY_MIN)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelId = "alarm_channel"
-            val channelName = "Alarm Channel"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(channelId, channelName, importance)
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
-
-            builder.setChannelId(channelId)
+            createNotificationChannel()
+            builder.setChannelId("alarm_channel")
         }
         return builder.build()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel() {
+        val channelId = "alarm_channel"
+        val channelName = "Alarm Channel"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(channelId, channelName, importance)
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
     }
 
     override fun onDestroy() {

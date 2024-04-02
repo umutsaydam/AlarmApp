@@ -17,8 +17,8 @@ import com.umutsaydam.alarmapp.helpers.ITimerManager
 
 class StopWatchService : Service(), ITimerManager {
     private var isStopWatchRunning = false
-    private var service: NotificationManager? = null
-    private var notificationBuilder: NotificationCompat.Builder? = null
+    private lateinit var service: NotificationManager
+    private lateinit var notificationBuilder: NotificationCompat.Builder
     private val binder = TimerBinder()
     private lateinit var countDownTimer: CountDownTimer
     private var startTime: Long = 0
@@ -38,11 +38,12 @@ class StopWatchService : Service(), ITimerManager {
         startForegroundService()
         return START_STICKY
     }
+
     private fun startForegroundService() {
         if (!isStopWatchRunning) {
-            var notification = createNotification()
+            val notification = createNotification()
             startForeground(2, notification)
-            countDownTimer = object : CountDownTimer(3600000, 1000) {
+            countDownTimer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
                 override fun onTick(millisUntilFinished: Long) {
                     if (isStopWatchRunning) {
                         val intent = Intent("STOPWATCH_TICK")
@@ -51,11 +52,8 @@ class StopWatchService : Service(), ITimerManager {
                         intent.putExtra("timeFormatted", formattedTime)
                         sendBroadcast(intent)
 
-                        notificationBuilder?.let {
-                            it.setContentText(formattedTime)
-                            notification = it.build()
-                            service!!.notify(2, notification)
-                        }
+                        notificationBuilder.setContentText(formattedTime)
+                        service.notify(2, notificationBuilder.build())
                     }
                 }
 
@@ -66,6 +64,7 @@ class StopWatchService : Service(), ITimerManager {
                     val hours = (elapsedTime / 1000 / 60 / 60).toInt()
                     return String.format("%02d:%02d:%02d", hours, minutes, seconds)
                 }
+
                 override fun onFinish() {
                     isStopWatchRunning = false
                     stopSelf()
@@ -80,12 +79,12 @@ class StopWatchService : Service(), ITimerManager {
     private fun createNotification(): Notification {
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                createNotificationChannel("my_service", "My Background Service")
+                createNotificationChannel()
             } else {
                 ""
             }
         notificationBuilder = NotificationCompat.Builder(applicationContext, channelId)
-        return notificationBuilder!!.setOngoing(true)
+        return notificationBuilder.setOngoing(true)
             .setContentTitle("Timer Service")
             .setOnlyAlertOnce(true)
             .setSmallIcon(R.drawable.ic_stop_watch)
@@ -96,11 +95,16 @@ class StopWatchService : Service(), ITimerManager {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel(channelId: String, channelName: String): String {
-        val channel =
-            NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE)
-        service = getSystemService(NotificationManager::class.java) as NotificationManager
-        service!!.createNotificationChannel(channel)
+    private fun createNotificationChannel(): String {
+        val channelId = "stopwatch_service"
+        val channelName = "Stopwatch Background Service"
+        val channel = NotificationChannel(
+            channelId,
+            channelName,
+            NotificationManager.IMPORTANCE_NONE
+        )
+        service = getSystemService(NotificationManager::class.java)
+        service.createNotificationChannel(channel)
         return channelId
     }
 
@@ -125,7 +129,7 @@ class StopWatchService : Service(), ITimerManager {
 
     override fun cancelTimer() {
         Log.d("R/T", "timer is canceled")
-        service?.cancel(2)
+        service.cancel(2)
         countDownTimer.cancel()
         isStopWatchRunning = false
         stopSelf()

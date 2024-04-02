@@ -10,7 +10,6 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -37,10 +36,9 @@ class StopWatchFragment : Fragment() {
     ): View {
         _binding = FragmentStopWatchBinding.inflate(inflater, container, false)
 
-        context?.let {
-            sharedPreferences = it.getSharedPreferences("StopWatchFeature", Context.MODE_PRIVATE)
-            editor = sharedPreferences.edit()
-        }
+        sharedPreferences = requireContext().getSharedPreferences("StopWatchFeature", Context.MODE_PRIVATE)
+        editor = sharedPreferences.edit()
+
 
         if (sharedPreferences.getBoolean("isStopWatchEnabled", false)) {
             changeTimerController(true)
@@ -58,7 +56,6 @@ class StopWatchFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == "STOPWATCH_TICK") {
                 val timeLeftFormatted = intent.getStringExtra("timeFormatted")
-                Log.d("R/T", "Time left: $timeLeftFormatted seconds *************************")
                 binding.tvTimer.text = timeLeftFormatted
 
                 if (!isStopWatchEnable) {
@@ -144,7 +141,6 @@ class StopWatchFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         requireContext().registerReceiver(broadcastReceiver, IntentFilter("STOPWATCH_TICK"))
-        Log.d("R/T", "Broadcast basladi")
         Intent(requireContext(), StopWatchService::class.java).also { intent ->
             requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
@@ -153,15 +149,13 @@ class StopWatchFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         requireContext().unregisterReceiver(broadcastReceiver)
-        Log.d("R/T", "Broadcast bitti")
-        Intent(requireContext(), StopWatchService::class.java).also { intent ->
-            requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        Intent(requireContext(), StopWatchService::class.java).also {
+            requireContext().unbindService(connection)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        Log.d("R/D", "onDestroy")
     }
 }

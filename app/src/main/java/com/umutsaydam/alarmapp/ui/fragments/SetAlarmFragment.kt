@@ -1,6 +1,5 @@
 package com.umutsaydam.alarmapp.ui.fragments
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -8,16 +7,12 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.PopupWindow
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -53,7 +48,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
     private var editState = EDIT_MODE_OFF
     private var editAlarmModel: AlarmModel? = null
     private var hourMinuteFormat = ""
-    private var alarmTitle = "None"
+    private var currAlarmTitle = "None"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,6 +56,29 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
     ): View {
         _binding = FragmentSetAlarmBinding.inflate(inflater, container, false)
 
+        arguments?.let {
+            editAlarmModel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                it.getParcelable("alarmModel", AlarmModel::class.java)
+            } else {
+                it.getParcelable("alarmModel")!!
+            }
+            if (editAlarmModel != null) {
+                editState = EDIT_MODE_ON
+                initEditAlarmUI(editAlarmModel!!)
+                dayList.addAll(editAlarmModel!!.alarmRepeat)
+            }
+        }
+
+        initRecyclerDays()
+        ringtoneSelector = RingtoneSelector(this)
+        initViewModel()
+        initCalendar()
+        initUI()
+
+        return binding.root
+    }
+
+    private fun initRecyclerDays() {
         val days = listOf(
             RepeatDaysItemModel("S"),
             RepeatDaysItemModel("M"),
@@ -71,20 +89,6 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
             RepeatDaysItemModel("S"),
         )
 
-        if (arguments != null) {
-            editAlarmModel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                arguments!!.getParcelable("alarmModel", AlarmModel::class.java)
-            } else {
-                arguments!!.getParcelable("alarmModel")!!
-            }
-            if (editAlarmModel != null) {
-                editState = EDIT_MODE_ON
-                Log.d("R/T", "${editAlarmModel!!.alarmRingtoneUri} 68")
-                initEditAlarmUI(editAlarmModel!!)
-                dayList.addAll(editAlarmModel!!.alarmRepeat)
-            }
-        }
-
         binding.rcDays.apply {
             layoutManager = LinearLayoutManager(context!!, LinearLayoutManager.HORIZONTAL, false)
             adapter = if (editState) RepeatAdapter(
@@ -93,20 +97,13 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
                 this@SetAlarmFragment
             ) else RepeatAdapter(days, null, this@SetAlarmFragment)
         }
-
-        ringtoneSelector = RingtoneSelector(this)
-        initViewModel()
-        initCalendar()
-        initUI()
-
-        return binding.root
     }
 
     private fun initEditAlarmUI(editAlarmModel: AlarmModel) {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = editAlarmModel.alarmTime
         hourMinuteFormat = editAlarmModel.alarmHourMinuteFormat!!
-        binding.tvClockTitleDefault.setText(editAlarmModel.alarmTitle)
+        binding.tvClockTitleDefault.text = editAlarmModel.alarmTitle
         binding.switchVibrating.isChecked = editAlarmModel.alarmVibrating
         alarmVibrate = editAlarmModel.alarmVibrating
         val ringtoneManager =
@@ -117,7 +114,6 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
     private fun initUI() {
         binding.btAlarmSave.setOnClickListener {
             alarmRingtoneUri = ringtoneSelector.currentRingtone()
-            Log.d("R/T", "${alarmRingtoneUri} 108")
 
             if (editState) {
                 editAlarmModel!!.apply {
@@ -125,7 +121,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
                     this.alarmRepeat = dayList
                     this.alarmVibrating = alarmVibrate
                     this.alarmRingtoneUri = alarmRingtoneUri.toString()
-                    this.alarmTitle = alarmTitle
+                    this.alarmTitle = currAlarmTitle
                     this.alarmHourMinuteFormat = hourMinuteFormat
                 }
                 viewModel.updateAlarm(editAlarmModel!!)
@@ -135,7 +131,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
                     }
             } else {
                 viewModel.addAlarm(
-                    alarmTitle,
+                    currAlarmTitle,
                     timeInMillis,
                     dayList,
                     alarmVibrate,
@@ -151,7 +147,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
             showPopUp()
         }
 
-        binding.switchVibrating.setOnCheckedChangeListener { p0, p1 ->
+        binding.switchVibrating.setOnCheckedChangeListener { _, p1 ->
             alarmVibrate = p1
         }
 
@@ -182,7 +178,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
             val newAlarmTitle =
                 dialog.findViewById<EditText>(R.id.etAlarmTitle).text.toString().trim()
             if (newAlarmTitle.isNotEmpty())
-                alarmTitle = newAlarmTitle
+                currAlarmTitle = newAlarmTitle
             dialog.dismiss()
         }
 

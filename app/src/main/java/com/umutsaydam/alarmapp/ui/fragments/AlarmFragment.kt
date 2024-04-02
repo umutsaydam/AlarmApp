@@ -32,16 +32,17 @@ class AlarmFragment : Fragment(), SetCheckedListener, SetClickListener {
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentAlarmBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initViewModel()
         viewModel.getAlarms().observe(viewLifecycleOwner) {
             alarmAdapter.differ.submitList(it)
         }
         initUI()
-
-        return binding.root
     }
-
     override fun setOnCheckedListener(alarmModel: AlarmModel) {
         alarmModel.alarmEnabled = !alarmModel.alarmEnabled
         if (alarmModel.alarmEnabled)
