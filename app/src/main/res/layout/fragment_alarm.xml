@@ -24,6 +24,7 @@
         android:contentDescription="@string/add_an_alarm"
         android:src="@drawable/ic_plus"
         app:tint="@color/white"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

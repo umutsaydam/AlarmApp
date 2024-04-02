@@ -5,10 +5,6 @@
         android:icon="@drawable/ic_alarm"
         android:title="@string/alarm" />
     <item
-        android:id="@+id/worldClockFragment"
-        android:icon="@drawable/ic_world_time"
-        android:title="@string/world_clock" />
-    <item
         android:id="@+id/timerFragment"
         android:icon="@drawable/ic_timer"
         android:title="@string/timer" />

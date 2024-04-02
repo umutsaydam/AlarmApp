@@ -11,52 +11,62 @@
         android:id="@+id/tbCustom"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:contentInsetStart="0dp"
         app:contentInsetEnd="0dp"
+        app:contentInsetStart="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/clock"
             android:gravity="center_vertical"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            android:letterSpacing="0.04"
             android:paddingHorizontal="8dp"
+            android:text="@string/clock"
             android:textColor="@color/header"
-            android:letterSpacing="0.04"/>
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_settings"
             android:layout_gravity="end"
-            android:paddingEnd="15dp"
+            android:contentDescription="@string/settings"
             android:paddingStart="25dp"
-            android:contentDescription="@string/settings"/>
+            android:paddingEnd="15dp"
+            android:src="@drawable/ic_settings" />
     </com.google.android.material.appbar.MaterialToolbar>
+
+    <View
+        android:id="@+id/tbViewStroke"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/custom_border"
+        app:layout_constraintTop_toBottomOf="@+id/tbCustom" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/bottom_nav"
-        app:layout_constraintTop_toBottomOf="@+id/tbCustom"
-        app:layout_constraintBottom_toTopOf="@+id/viewStroke"/>
+        app:layout_constraintBottom_toTopOf="@+id/bvViewStroke"
+        app:layout_constraintTop_toBottomOf="@+id/tbViewStroke"
+        app:navGraph="@navigation/bottom_nav" />
+
     <View
-        android:id="@+id/viewStroke"
+        android:id="@+id/bvViewStroke"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/header"
-        app:layout_constraintBottom_toTopOf="@+id/btNavigation"/>
+        android:background="@color/custom_border"
+        app:layout_constraintBottom_toTopOf="@+id/btNavigation" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/btNavigation"
-        android:background="@color/main_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/main_bg"
         app:itemIconTint="@drawable/item_color_state"
         app:itemTextColor="@drawable/item_color_state"
         app:labelVisibilityMode="labeled"

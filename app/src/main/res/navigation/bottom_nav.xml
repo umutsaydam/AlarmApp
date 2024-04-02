@@ -11,9 +11,6 @@
         android:label="fragment_alarm"
         tools:layout="@layout/fragment_alarm" >
         <action
-            android:id="@+id/action_alarmFragment_to_worldClockFragment"
-            app:destination="@id/worldClockFragment" />
-        <action
             android:id="@+id/action_alarmFragment_to_stopWatchFragment"
             app:destination="@id/stopWatchFragment" />
         <action
@@ -28,9 +25,6 @@
         android:name="com.umutsaydam.alarmapp.ui.fragments.StopWatchFragment"
         android:label="fragment_stop_watch"
         tools:layout="@layout/fragment_stop_watch" >
-        <action
-            android:id="@+id/action_stopWatchFragment_to_worldClockFragment"
-            app:destination="@id/worldClockFragment" />
         <action
             android:id="@+id/action_stopWatchFragment_to_alarmFragment"
             app:destination="@id/alarmFragment" />
@@ -47,26 +41,8 @@
             android:id="@+id/action_timerFragment_to_alarmFragment"
             app:destination="@id/alarmFragment" />
         <action
-            android:id="@+id/action_timerFragment_to_worldClockFragment"
-            app:destination="@id/worldClockFragment" />
-        <action
             android:id="@+id/action_timerFragment_to_stopWatchFragment"
             app:destination="@id/stopWatchFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/worldClockFragment"
-        android:name="com.umutsaydam.alarmapp.ui.fragments.WorldClockFragment"
-        android:label="fragment_world_clock"
-        tools:layout="@layout/fragment_world_clock" >
-        <action
-            android:id="@+id/action_worldClockFragment_to_stopWatchFragment"
-            app:destination="@id/stopWatchFragment" />
-        <action
-            android:id="@+id/action_worldClockFragment_to_alarmFragment"
-            app:destination="@id/alarmFragment" />
-        <action
-            android:id="@+id/action_worldClockFragment_to_timerFragment"
-            app:destination="@id/timerFragment" />
     </fragment>
     <fragment
         android:id="@+id/setAlarmFragment"
