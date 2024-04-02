@@ -1,17 +1,28 @@
 package com.umutsaydam.alarmapp.ui.fragments
 
+import android.app.AlertDialog
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.umutsaydam.alarmapp.R
 import com.umutsaydam.alarmapp.adapters.RepeatAdapter
 import com.umutsaydam.alarmapp.databinding.FragmentSetAlarmBinding
 import com.umutsaydam.alarmapp.db.AlarmDatabase
@@ -42,6 +53,8 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
     private var editState = EDIT_MODE_OFF
     private var editAlarmModel: AlarmModel? = null
     private var hourMinuteFormat = ""
+    private var alarmTitle = "None"
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -93,7 +106,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = editAlarmModel.alarmTime
         hourMinuteFormat = editAlarmModel.alarmHourMinuteFormat!!
-        binding.tvClockTitle.setText(editAlarmModel.alarmTitle)
+        binding.tvClockTitleDefault.setText(editAlarmModel.alarmTitle)
         binding.switchVibrating.isChecked = editAlarmModel.alarmVibrating
         alarmVibrate = editAlarmModel.alarmVibrating
         val ringtoneManager =
@@ -103,8 +116,6 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
 
     private fun initUI() {
         binding.btAlarmSave.setOnClickListener {
-            val title = binding.tvClockTitle.text.toString()
-
             alarmRingtoneUri = ringtoneSelector.currentRingtone()
             Log.d("R/T", "${alarmRingtoneUri} 108")
 
@@ -114,7 +125,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
                     this.alarmRepeat = dayList
                     this.alarmVibrating = alarmVibrate
                     this.alarmRingtoneUri = alarmRingtoneUri.toString()
-                    this.alarmTitle = title
+                    this.alarmTitle = alarmTitle
                     this.alarmHourMinuteFormat = hourMinuteFormat
                 }
                 viewModel.updateAlarm(editAlarmModel!!)
@@ -124,7 +135,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
                     }
             } else {
                 viewModel.addAlarm(
-                    title,
+                    alarmTitle,
                     timeInMillis,
                     dayList,
                     alarmVibrate,
@@ -134,6 +145,10 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
                     findNavController().popBackStack()
                 }
             }
+        }
+
+        binding.llClockTitle.setOnClickListener {
+            showPopUp()
         }
 
         binding.switchVibrating.setOnCheckedChangeListener { p0, p1 ->
@@ -148,6 +163,29 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
         binding.linearLayoutRingtone.setOnClickListener {
             ringtoneSelector.selectRingtone()
         }
+    }
+
+    private fun showPopUp() {
+        val dialog = Dialog(context!!)
+        dialog.setContentView(R.layout.clock_title_popup)
+
+        dialog.window?.let {
+            it.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            it.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        }
+
+        dialog.findViewById<Button>(R.id.btnSaveAlarmTitle).setOnClickListener {
+            val newAlarmTitle =
+                dialog.findViewById<EditText>(R.id.etAlarmTitle).text.toString().trim()
+            if (newAlarmTitle.isNotEmpty())
+                alarmTitle = newAlarmTitle
+            dialog.dismiss()
+        }
+
+        dialog.findViewById<Button>(R.id.btnCancel).setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 
     private fun initCalendar() {

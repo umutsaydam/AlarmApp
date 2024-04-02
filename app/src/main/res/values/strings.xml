@@ -23,4 +23,6 @@
     <string name="start">Start</string>
     <string name="resume">Resume</string>
     <string name="pause">Pause</string>
+    <string name="default_clock_title">Default</string>
+    <string name="ok">Ok</string>
 </resources>
