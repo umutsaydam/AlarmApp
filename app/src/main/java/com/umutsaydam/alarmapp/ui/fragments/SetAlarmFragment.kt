@@ -163,6 +163,10 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
         binding.linearLayoutRingtone.setOnClickListener {
             ringtoneSelector.selectRingtone()
         }
+
+        binding.btAlarmCancel.setOnClickListener {
+            findNavController().navigateUp()
+        }
     }
 
     private fun showPopUp() {
