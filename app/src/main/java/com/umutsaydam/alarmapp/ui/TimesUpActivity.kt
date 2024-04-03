@@ -40,10 +40,12 @@ class TimesUpActivity : AppCompatActivity(), IVibrator, IRingtonePlayer {
                 it.getParcelable<AlarmModel>("alarmModel")!! as AlarmModel
             }
         }
-        if (alarmModel.alarmRingtoneUri == null || alarmModel.alarmRingtoneUri == ""){
+        if (alarmModel.alarmRingtoneUri == null || alarmModel.alarmRingtoneUri == "") {
             alarmModel.alarmRingtoneUri = intent.getStringExtra("testRingtone")
             Log.d("R/T", "ringtone is empty")
         }
+
+        alarmModel.alarmHourMinuteFormat = intent.getStringExtra("alarmHourMinuteFormat")
 
         alarmVibrating = alarmModel.alarmVibrating
 
@@ -64,7 +66,6 @@ class TimesUpActivity : AppCompatActivity(), IVibrator, IRingtonePlayer {
     private fun initUI() {
         binding.tvAlarmTime.text = alarmModel.alarmHourMinuteFormat
         binding.tvAlarmTitle.text = alarmModel.alarmTitle
-
 
         binding.fbStopAlarm.setOnTouchListener { view, motionEvent ->
             val data = ClipData.newPlainText("", "word")

@@ -60,10 +60,10 @@ class AlarmViewModel(context: Context, private val alarmRepository: AlarmReposit
         val rescheduledTime = alarmSchedule.alarmReschedule(alarmModel)
         alarmModel.alarmTime = rescheduledTime
         alarmModel.alarmTitle = checkAlarmTitle(alarmModel.alarmTitle)
-        alarmRepository.addAlarm(alarmModel)
         alarmManager.updateAlarm(alarmModel)
         updateCountOfEnabledAlarms()
         checkAlarmNotificationState()
+        alarmRepository.addAlarm(alarmModel)
     }
 
     fun getSingleAlarm(alarmId: Int) = viewModelScope.launch {

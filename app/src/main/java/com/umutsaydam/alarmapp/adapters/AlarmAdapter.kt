@@ -22,12 +22,19 @@ class AlarmAdapter(
 
     class AlarmViewHolder(private val itemBinding: AlarmListItemBinding) :
         RecyclerView.ViewHolder(itemBinding.root) {
-        fun bind(alarm: AlarmModel) {
+        fun bind(
+            alarm: AlarmModel,
+            onCheckedListener: SetCheckedListener,
+            setClickListener: SetClickListener,
+        ) {
             itemBinding.tvClockTime.text = alarm.alarmHourMinuteFormat
             itemBinding.tvClockTitle.text = alarm.alarmTitle
             itemBinding.switchAlarmToggle.isChecked = alarm.alarmEnabled
             setCardBackground(alarm.alarmEnabled)
             itemBinding.tvClockRepeat.text = convertToDays(alarm.alarmRepeat)
+            setCheckedListener(alarm, onCheckedListener)
+            setOnClickListener(alarm, setClickListener)
+            setOnLongClickListener(alarm, setClickListener)
         }
 
         private fun convertToDays(alarmRepeat: List<Int>): String {
@@ -44,21 +51,24 @@ class AlarmAdapter(
             )
         }
 
-        fun setCheckedListener(alarm: AlarmModel, onCheckedListener: SetCheckedListener) {
-            itemBinding.switchAlarmToggle.setOnCheckedChangeListener { p0, p1 ->
-                onCheckedListener.setOnCheckedListener(alarm)
+        private fun setCheckedListener(alarm: AlarmModel, onCheckedListener: SetCheckedListener) {
+            itemBinding.switchAlarmToggle.setOnCheckedChangeListener { _, _ ->
+                onCheckedListener.setOnCheckedListener(adapterPosition)
                 setCardBackground(alarm.alarmEnabled)
             }
         }
 
-        fun setOnLongClickListener(alarmModel: AlarmModel, setClickListener: SetClickListener) {
+        private fun setOnLongClickListener(
+            alarmModel: AlarmModel,
+            setClickListener: SetClickListener,
+        ) {
             itemBinding.cvAlarm.setOnLongClickListener(View.OnLongClickListener {
                 setClickListener.setOnLongClickListener(alarmModel)
                 return@OnLongClickListener true
             })
         }
 
-        fun setOnClickListener(alarmModel: AlarmModel, setClickListener: SetClickListener){
+        private fun setOnClickListener(alarmModel: AlarmModel, setClickListener: SetClickListener) {
             itemBinding.cvAlarm.setOnClickListener {
                 setClickListener.setOnClickListener(alarmModel)
             }
@@ -83,11 +93,7 @@ class AlarmAdapter(
     }
 
     override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
-        holder.bind(differ.currentList[position])
-
-        holder.setCheckedListener(differ.currentList[position], setOnCheckedListener)
-        holder.setOnLongClickListener(differ.currentList[position], setClickListener)
-        holder.setOnClickListener(differ.currentList[position], setClickListener)
+        holder.bind(differ.currentList[position], setOnCheckedListener, setClickListener)
     }
 
     override fun getItemCount(): Int {

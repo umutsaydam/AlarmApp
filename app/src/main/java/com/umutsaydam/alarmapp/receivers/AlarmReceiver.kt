@@ -61,6 +61,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val myIntent = Intent(context, TimesUpActivity::class.java).apply {
             putExtra("alarmModelBundle", Bundle().apply { putParcelable("alarmModel", alarmModel) })
             putExtra("testRingtone", alarmModel.alarmRingtoneUri)
+            putExtra("alarmHourMinuteFormat", alarmModel.alarmHourMinuteFormat)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         context.startActivity(myIntent)

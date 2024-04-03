@@ -179,6 +179,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
                 dialog.findViewById<EditText>(R.id.etAlarmTitle).text.toString().trim()
             if (newAlarmTitle.isNotEmpty())
                 currAlarmTitle = newAlarmTitle
+            binding.tvClockTitleDefault.text = currAlarmTitle
             dialog.dismiss()
         }
 
@@ -191,7 +192,6 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
     private fun initCalendar() {
         selected = Calendar.getInstance()
         binding.timePicker.setIs24HourView(true)
-
         if (editState) {
             val date = Date(editAlarmModel!!.alarmTime)
             selected.time = date
@@ -204,6 +204,10 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
         } else {
             timeInMillis = selected.timeInMillis
         }
+        hourMinuteFormat = ConverterHoursMinutesFormat.convertToHourAndMinuteFormat(
+            selected[Calendar.HOUR_OF_DAY],
+            selected[Calendar.MINUTE]
+        )
         binding.timePicker.setOnTimeChangedListener { _, p1, p2 ->
             selected[Calendar.HOUR_OF_DAY] = p1
             selected[Calendar.MINUTE] = p2
