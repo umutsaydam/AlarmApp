@@ -17,9 +17,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:textStyle="bold"
-            android:background="@color/main_bg"
+            android:background="@drawable/btn_style_bottom"
             android:text="@string/cancel"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btAlarmSave"
@@ -27,8 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:textStyle="bold"
-
-            android:background="@color/main_bg"
+            android:background="@drawable/btn_style_bottom"
             android:text="@string/save"
             android:textColor="@color/black" />
     </LinearLayout>

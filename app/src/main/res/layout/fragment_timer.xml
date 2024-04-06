@@ -54,6 +54,7 @@
         android:enabled="false"
         android:minHeight="65dp"
         android:text="@string/start"
+        android:background="@drawable/btn_style_top"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -75,6 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:minHeight="65dp"
+            android:background="@drawable/btn_style_top"
             android:text="@string/pause"
             android:textStyle="bold" />
 
@@ -84,6 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:visibility="gone"
+            android:background="@drawable/btn_style_top"
             android:minHeight="65dp"
             android:text="@string/resume"
             android:textStyle="bold" />
@@ -93,6 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
+            android:background="@drawable/btn_style_top"
             android:minHeight="65dp"
             android:text="@string/cancel"
             android:textStyle="bold" />

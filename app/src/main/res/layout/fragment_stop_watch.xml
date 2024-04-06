@@ -25,6 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="65dp"
+        android:background="@drawable/btn_style_top"
         android:text="@string/start"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -46,6 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
+            android:background="@drawable/btn_style_top"
             android:minHeight="65dp"
             android:text="@string/pause"
             android:textStyle="bold" />
@@ -55,6 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
+            android:background="@drawable/btn_style_top"
             android:visibility="gone"
             android:minHeight="65dp"
             android:text="@string/resume"
@@ -66,6 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:minHeight="65dp"
+            android:background="@drawable/btn_style_top"
             android:text="@string/cancel"
             android:textStyle="bold" />
     </androidx.appcompat.widget.LinearLayoutCompat>
