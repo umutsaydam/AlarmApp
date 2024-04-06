@@ -38,7 +38,7 @@ class AlarmAdapter(
         }
 
         private fun convertToDays(alarmRepeat: List<Int>): String {
-            val days: String = ConvertNumsToDays.convertNumsToDays(alarmRepeat).toString()
+            val days: String = ConvertNumsToDays.convertNumsToDays(itemBinding.root.resources.getString(R.string.everyday), alarmRepeat).toString()
             return days.replace(Regex("[\\[\\]]"), "")
         }
 

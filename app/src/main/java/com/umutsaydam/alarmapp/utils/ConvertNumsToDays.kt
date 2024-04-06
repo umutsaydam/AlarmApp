@@ -1,10 +1,11 @@
 package com.umutsaydam.alarmapp.utils
 
-object ConvertNumsToDays {
-    private val days: List<String> = listOf("S", "M", "T", "W", "Th", "F", "St")
 
-    fun convertNumsToDays(dayNumList: List<Int>): List<String> {
-        if (dayNumList.size == 7) return listOf("Everyday")
+object ConvertNumsToDays {
+    private val days: List<String> = GetDaysByLang.getDays()
+
+    fun convertNumsToDays(everyday: String, dayNumList: List<Int>): List<String> {
+        if (dayNumList.size == 7) return listOf(everyday)
 
         val selectedDays: ArrayList<String> = arrayListOf()
         dayNumList.forEach { num ->

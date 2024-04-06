@@ -91,7 +91,7 @@ class TimerService : Service(), ITimerManager {
             }
         notificationBuilder = NotificationCompat.Builder(applicationContext, channelId)
         return notificationBuilder.setOngoing(true)
-            .setContentTitle("Timer Service")
+            .setContentTitle(applicationContext.getString(R.string.timer_service))
             .setOnlyAlertOnce(true)
             .setSmallIcon(R.drawable.ic_timer)
             .setContentText("")

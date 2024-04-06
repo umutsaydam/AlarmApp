@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Alarm App</string>
+    <string name="timer">ZAMANLAYICI</string>
+    <string name="stop_watch">KRONOMETRE</string>
+    <string name="clock">Saat</string>
+    <string name="settings">Ayarlar</string>
+    <string name="add_an_alarm">Alarm kur</string>
+    <string name="time">Zaman</string>
+    <string name="repeat">Tekrarla</string>
+    <string name="calendar">Takvim</string>
+    <string name="clock_title">Alarm Başlığı</string>
+    <string name="cancel">İptal</string>
+    <string name="save">Kaydet</string>
+    <string name="vibrating">Titreşim</string>
+    <string name="ringtone">Zil Sesi</string>
+    <string name="default_ringtone">Varsayılan</string>
+    <string name="alarm_off">Alarm kapalı</string>
+    <string name="arrows">Oklar</string>
+    <string name="start">Başlat</string>
+    <string name="resume">Devam et</string>
+    <string name="pause">Durdur</string>
+    <string name="default_clock_title">Varsayılan</string>
+    <string name="ok">Tamam</string>
+    <string name="everyday">Her gün</string>
+    <string name="delete_selected_alarm">Seçili alarmı sil</string>
+    <string name="alarm_will_delete">Alarm silinecek.</string>
+    <string name="no">Hayır</string>
+    <string name="yes">Evet</string>
+    <string name="timer_service">Zamanlayıcı Servisi</string>
+</resources>

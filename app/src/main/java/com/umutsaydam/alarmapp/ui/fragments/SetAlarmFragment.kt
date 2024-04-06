@@ -24,13 +24,13 @@ import com.umutsaydam.alarmapp.db.AlarmDatabase
 import com.umutsaydam.alarmapp.helpers.IRingtoneSelector
 import com.umutsaydam.alarmapp.helpers.RingtoneSelector
 import com.umutsaydam.alarmapp.models.AlarmModel
-import com.umutsaydam.alarmapp.models.RepeatDaysItemModel
 import com.umutsaydam.alarmapp.repository.AlarmRepository
 import com.umutsaydam.alarmapp.ui.viewmodels.AlarmViewModel
 import com.umutsaydam.alarmapp.ui.viewmodels.AlarmsViewModelFactory
 import com.umutsaydam.alarmapp.utils.Constants.EDIT_MODE_OFF
 import com.umutsaydam.alarmapp.utils.Constants.EDIT_MODE_ON
 import com.umutsaydam.alarmapp.utils.ConverterHoursMinutesFormat
+import com.umutsaydam.alarmapp.utils.GetDaysByLang
 import com.umutsaydam.alarmapp.utils.SetCheckedListener
 import java.util.Calendar
 import java.util.Date
@@ -79,15 +79,7 @@ class SetAlarmFragment : Fragment(), IRingtoneSelector, SetCheckedListener {
     }
 
     private fun initRecyclerDays() {
-        val days = listOf(
-            RepeatDaysItemModel("S"),
-            RepeatDaysItemModel("M"),
-            RepeatDaysItemModel("T"),
-            RepeatDaysItemModel("W"),
-            RepeatDaysItemModel("T"),
-            RepeatDaysItemModel("F"),
-            RepeatDaysItemModel("S"),
-        )
+        val days = GetDaysByLang.getDaysRepeatDays()
 
         binding.rcDays.apply {
             layoutManager = LinearLayoutManager(context!!, LinearLayoutManager.HORIZONTAL, false)

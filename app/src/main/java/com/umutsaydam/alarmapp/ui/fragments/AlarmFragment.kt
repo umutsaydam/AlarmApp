@@ -43,6 +43,7 @@ class AlarmFragment : Fragment(), SetCheckedListener, SetClickListener {
         }
         initUI()
     }
+
     override fun setOnCheckedListener(position: Int) {
         val alarmModel = alarmAdapter.differ.currentList[position]
         alarmModel.alarmEnabled = !alarmModel.alarmEnabled
@@ -55,11 +56,11 @@ class AlarmFragment : Fragment(), SetCheckedListener, SetClickListener {
 
     override fun setOnLongClickListener(alarmModel: AlarmModel) {
         val dialog = AlertDialog.Builder(context)
-        dialog.setTitle("Delete selected alarm")
-        dialog.setMessage("Alarm will delete.")
-        dialog.setNegativeButton("No") { _, _ ->
+        dialog.setTitle(resources.getString(R.string.delete_selected_alarm))
+        dialog.setMessage(resources.getString(R.string.alarm_will_delete))
+        dialog.setNegativeButton(resources.getString(R.string.no)) { _, _ ->
         }
-        dialog.setPositiveButton("Yes") { _, _ ->
+        dialog.setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
             viewModel.deleteAlarm(alarmModel)
         }
         dialog.setCancelable(true)
